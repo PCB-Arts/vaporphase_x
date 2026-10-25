@@ -48,40 +48,6 @@ static volatile bool SD_mounted = false;
 static volatile bool SD_should_unmount = false;
 static volatile bool SD_should_mount = false;
 
-FATFS fs;
-FIL file;
-FRESULT fres;
-UINT bytesWritten, bytesRead;
-
-char writeData[] = "FatFS 18.07.2025\n";
-char readData[100];
-
-void SD_Test_Rtos()
-{
-
-  // Mount SD card <-- mounting works
-  fres = f_mount(&fs, "0", 1);
-  if (fres != FR_OK)
-  {
-  }
-
-  // Create or overwrite file
-  fres = f_open(&file, "testfile.txt", FA_WRITE | FA_CREATE_ALWAYS);
-  if (fres != FR_OK)
-  {
-  }
-
-  fres = f_write(&file, writeData, strlen(writeData), &bytesWritten);
-  if (fres != FR_OK || bytesWritten == 0)
-  {
-    f_close(&file);
-  }
-
-  f_close(&file);
-
-  f_mount(NULL, "", 1);
-}
-
 void SD_Init()
 {
   // BSP_SD_Detect_MspInit(NULL, NULL);

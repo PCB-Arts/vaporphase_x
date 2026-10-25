@@ -52,12 +52,12 @@ flash: hex
 size:
 	arm-none-eabi-size $(ELF)
 
-# Runs CubeMX on the .ioc and dos2unix afterwards
+# Runs CubeMX on the .ioc and dos2unix afterwards (except for ./TouchGFX/generated)
 generate:
 	@tmpfile=$$(mktemp) && trap 'rm -f $$tmpfile $$tmpfile.log' EXIT \
 	  && printf 'config load %s\nproject generate\nexit\n' '$(IOC)' > $$tmpfile \
 	  && $(CUBEMX) -q $$tmpfile 2>&1 | tee $$tmpfile.log
-	@grep -I -r -l -Z $$'\r' . | xargs -0 dos2unix
+	@grep -I -r -l -Z $$'\r' . | grep -z -v '^\./TouchGFX/generated/' | xargs -0 -r dos2unix
 
 help:
 	@echo "make              build BUILD_CONFIG=$(BUILD_CONFIG) -> $(ELF)"
@@ -66,6 +66,9 @@ help:
 	@echo "make flash        $(FLASH_HELP)"
 	@echo "make size         section sizes"
 	@echo "make generate     run CubeMX code generation on the .ioc"
+	@echo "                  TouchGFX projects: CubeMX deletes Middlewares/ST/touchgfx_components,"
+	@echo "                  restore it with 'git restore Middlewares/ST/touchgfx_components'"
+	@echo "                  or TouchGFX Designer 'Generate Code'"
 	@echo
 	@echo "BUILD_CONFIG=Release"
 	@echo "                  select the Release configuration (now $(BUILD_CONFIG))"

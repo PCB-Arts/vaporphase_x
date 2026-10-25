@@ -18,16 +18,12 @@
 #include "memory_card.h"
 #include "main.h"
 
-#include "stdio.h"
-
 #include <string.h>
 
 extern SD_HandleTypeDef hsd1;
 
 FATFS SDFatFs; /* File system object for SD card logical drive */
 FIL g_logfile; /* File object */
-FIL testfile1;
-FIL testfile2;
 FIL g_selftestLogfile;
 char SDPath[4]; /* SD card logical drive path */
 
@@ -57,14 +53,8 @@ int sd_unmount(void)
 
 int sd_open_logfile()
 {
-
-  //	FRESULT testresult = f_open(&g_logfile, "0:/testfile.txt", FA_WRITE |
-  // FA_OPEN_APPEND); 	printf("f_open result is: %d\n", testresult); 	if
-  //(testresult != FR_OK) 		return -1; 	return 0;
-
   FRESULT result =
       f_open(&g_logfile, LOGFILE_FILENAME, FA_WRITE | FA_OPEN_APPEND);
-  printf("f_open result is: %d\n", result);
   if (result != FR_OK)
     return -1;
   return 0;
