@@ -47,6 +47,8 @@ private:
     bool startReflowEnabled = true;
     bool openLidEnabled = true;
 
+    int shownCurrentState = -1; // core state shown in state_text, -1: none yet
+
     int SolderProfilesVersion = -1;
     std::vector<std::string> solderProfiles;
     //DynamicDrawableListItems<custom_container_profile_select>* solderProfileWheelItems = nullptr;

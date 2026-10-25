@@ -144,6 +144,9 @@ void menuView::setupScreen()
     menuViewBase::setupScreen();
     graph_target.setTouchable(false);
     graph_actual.setTouchable(false);
+
+    // Only here and on unit toggle: it rebuilds both graphs completely
+    adaptUiToUnits();
 }
 
 void menuView::tearDownScreen()
@@ -161,7 +164,6 @@ void menuView::updateTemperatureAndState(){
 void menuView::handleTickEvent()
 {
 	this->updateTemperatureAndState();
-	this->adaptUiToUnits();
 	this->updateButtonStates();
 	this->updateSolderProfiles();
 	this->updateTemperatureGraph();
@@ -256,6 +258,8 @@ void menuView::updateCoolantTemperatureLabel() {
 	DegreeCelcius coolant_temperature_celsius = CoreCom_CoolantTemperature() / 1000;
 	float temp = celsiusToUnit(coolant_temperature_celsius, currentUnit);
 
+	// Invalidate the old extent too, else a shorter text leaves stray pixels
+	cooling_temp_text.invalidate();
 	Unicode::snprintfFloat(cooling_temp_textBuffer1, COOLING_TEMP_TEXTBUFFER1_SIZE,"%.0f", temp);
 	cooling_temp_text.resizeToCurrentText();
 	cooling_temp_text.invalidate();
@@ -272,6 +276,8 @@ void menuView::updatePCBTemperatureLabel() {
 	DegreeCelcius pcb_temperature_celsius = CoreCom_PcbTemperature() / 1000;
 	float temp = celsiusToUnit(pcb_temperature_celsius, currentUnit);
 
+	// Invalidate the old extent too, else a shorter text leaves stray pixels
+	pcb_temp_text.invalidate();
 	Unicode::snprintfFloat(pcb_temp_textBuffer1, PCB_TEMP_TEXTBUFFER1_SIZE,"%.0f", temp);
 	pcb_temp_text.resizeToCurrentText();
 	pcb_temp_text.invalidate();
@@ -287,6 +293,8 @@ void menuView::updateGaldenTemperatureLabel() {
 	DegreeCelcius galden_temperature_celcius = CoreCom_LiquidTemperature() / 1000;
 	float temp = celsiusToUnit(galden_temperature_celcius, currentUnit);
 
+	// Invalidate the old extent too, else a shorter text leaves stray pixels
+	galden_temp_text.invalidate();
 	Unicode::snprintfFloat(galden_temp_textBuffer1, GALDEN_TEMP_TEXTBUFFER1_SIZE,"%.0f", temp);
 	galden_temp_text.resizeToCurrentText();
 	galden_temp_text.invalidate();
@@ -295,39 +303,26 @@ void menuView::updateGaldenTemperatureLabel() {
 
 void menuView::updateCurrentState(){
 	Vpx_CoreStateTypeDef coreState = CoreCom_CoreState();
-	if(coreState.current_state == CS_Preheat){
-		//Clear Display
-		Unicode::strncpy(state_textBuffer, "\0" , 12);
-		state_text.invalidate();
-
-		Unicode::strncpy(state_textBuffer,"Preheat", 8);
-		state_text.resizeToCurrentText();
-		state_text.invalidate();
+	const int state = coreState.current_state;
+	if(state == shownCurrentState){
+		return;
 	}
-	else if(coreState.current_state == CS_Soldering){
-		Unicode::strncpy(state_textBuffer,"Soldering", 10);
-		state_text.resizeToCurrentText();
-		state_text.invalidate();
-		}
-	else if(coreState.current_state == CS_AntiCondensation){
-		Unicode::strncpy(state_textBuffer,"Quick cool",11);
-		state_text.resizeToCurrentText();
-		state_text.invalidate();
-		}
-	else if(coreState.current_state == CS_Calibration){
-		Unicode::strncpy(state_textBuffer,"Calibrating",12);
-		state_text.resizeToCurrentText();
-		state_text.invalidate();
-	}
-	else{
-		Unicode::strncpy(state_textBuffer, "\0" , 12);
-		state_text.invalidate();
+	shownCurrentState = state;
 
-		Unicode::strncpy(state_textBuffer, "Idle", 5);
-		state_text.resizeToCurrentText();
-		state_text.invalidate();
-
+	const char* text;
+	switch(state){
+	case CS_Preheat:          text = "Preheat";     break;
+	case CS_Soldering:        text = "Soldering";   break;
+	case CS_AntiCondensation: text = "Quick cool";  break;
+	case CS_Calibration:      text = "Calibrating"; break;
+	default:                  text = "Idle";        break;
 	}
+
+	// Invalidate the old extent too, else a shorter text leaves stray pixels
+	state_text.invalidate();
+	Unicode::strncpy(state_textBuffer, text, STATE_TEXT_SIZE);
+	state_text.resizeToCurrentText();
+	state_text.invalidate();
 }
 
 //void menuView::adaptUiToUnits(){
