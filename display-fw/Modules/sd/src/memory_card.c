@@ -17,10 +17,9 @@
 
 #include "memory_card.h"
 #include "main.h"
+#include "sdmmc.h"
 
 #include <string.h>
-
-extern SD_HandleTypeDef hsd1;
 
 FATFS SDFatFs; /* File system object for SD card logical drive */
 FIL g_logfile; /* File object */
@@ -30,8 +29,28 @@ char SDPath[4]; /* SD card logical drive path */
 static int sd_open_logfile(void);
 static int sd_close_logfile(void);
 
+/* Initialize the card from scratch, so a card inserted after boot or swapped
+ * after an eject works. main() doesn't call MX_SDMMC1_SD_Init() (disabled in
+ * CubeMX); its USER CODE turns a failed init into sdmmc1_init_failed instead
+ * of Error_Handler(), which would hang without a card. */
+static int sd_card_init(void)
+{
+  if (hsd1.State != HAL_SD_STATE_RESET)
+  {
+    HAL_SD_DeInit(&hsd1);
+  }
+
+  MX_SDMMC1_SD_Init();
+  return sdmmc1_init_failed ? -1 : 0;
+}
+
 int sd_mount(void)
 {
+  if (sd_card_init() != 0)
+  {
+    return -1;
+  }
+
   /* Register the file system object to the FatFs module */
   FRESULT result = f_mount(&SDFatFs, (TCHAR const *)SDPath, 1);
   if (result != FR_OK)
@@ -46,9 +65,24 @@ int sd_mount(void)
 int sd_unmount(void)
 {
   sd_close_logfile();
-  // HAL_SD_DeInit(&hsd1);                    // HAL deinit
   f_mount(NULL, "", 0);
+  HAL_SD_DeInit(&hsd1);
   return 0;
+}
+
+bool sd_card_removed(void)
+{
+  /* f_opendir() checks the card (disk_status(), CMD13) under the FatFs volume
+   * lock, so the check can't interfere with a transfer of another task. A lock
+   * timeout (another task is busy with the card) doesn't mean it was removed.
+   */
+  DIR dir;
+  const FRESULT result = f_opendir(&dir, "/");
+  if (result == FR_OK)
+  {
+    f_closedir(&dir);
+  }
+  return result == FR_NOT_READY || result == FR_DISK_ERR;
 }
 
 int sd_open_logfile()

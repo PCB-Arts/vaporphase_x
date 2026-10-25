@@ -36,7 +36,6 @@
 #include "octospi.h"
 #include "rng.h"
 #include "rtc.h"
-#include "sdmmc.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -166,7 +165,6 @@ int main(void)
   MX_TIM15_Init();
   MX_I2C1_Init();
   MX_USART1_UART_Init();
-  MX_SDMMC1_SD_Init();
   MX_TouchGFX_Init();
   /* Call PreOsInit function */
   MX_TouchGFX_PreOSInit();

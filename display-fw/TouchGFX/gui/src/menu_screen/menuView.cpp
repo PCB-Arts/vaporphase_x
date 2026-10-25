@@ -520,7 +520,7 @@ void menuView::options_openlid_tem_button_fast_onClick(){
     }
 
 void menuView::options_sd_card_button_mount_onClick(){
-     SD_Mount();
+	SD_SheduleMount();
 }
 
 void menuView::options_sd_card_button_eject_onClick(){
