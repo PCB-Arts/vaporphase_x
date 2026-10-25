@@ -57,6 +57,12 @@
       <Text Id="StartConditionErrorTitle" Alignment="Left" TypographyId="Default_fat">
         <Translation Language="GB">Start reflow condition not met</Translation>
       </Text>
+      <Text Id="InvalidProfileTitle" Alignment="Left" TypographyId="Default_fat">
+        <Translation Language="GB">Invalid solder profile</Translation>
+      </Text>
+      <Text Id="InvalidProfileBody" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">The solder profile could not be loaded. Please check the profile file.</Translation>
+      </Text>
       <Text Id="ProcessCancelTitle" Alignment="Left" TypographyId="Default_fat">
         <Translation Language="GB">Cancel Reflow</Translation>
       </Text>

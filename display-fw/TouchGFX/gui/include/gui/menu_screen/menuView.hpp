@@ -31,7 +31,7 @@ public:
 
 private:
 
-    constexpr static int maxProfileDuration = 600;
+    constexpr static int maxProfileDuration = SOLDERPROFILE_MAX_DURATION_S;
     int profileDurationS = 600;
     float profileTemperaturesS[maxProfileDuration];
     float measuredTemperaturesS[maxProfileDuration];

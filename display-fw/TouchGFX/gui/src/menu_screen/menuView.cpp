@@ -627,7 +627,15 @@ void menuView::options_button_profile_set_onClick(){
 		std::string profilePath = solderProfiles[itemIndex];
 		selectedProfile = loadSolderCsv(profilePath);
 		if(!selectedProfile.valid){
-			SD_SheduleUnmount();
+			if(selectedProfile.readError){
+				SD_SheduleUnmount();
+			} else {
+				// the reason is in the log
+				vpx_log("Profile %s is invalid", profilePath.c_str());
+				modalWrapper.sheduleInformationModal(
+						touchgfx::TypedText(T_INVALIDPROFILETITLE),
+						touchgfx::TypedText(T_INVALIDPROFILEBODY));
+			}
 			return;
 		}
 		vpx_log("Profile %s selected", profilePath.c_str());
