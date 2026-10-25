@@ -170,6 +170,7 @@ void menuView::handleTickEvent()
 	this->updateSolderProfiles();
 	this->updateTemperatureGraph();
 	this->updateLogging();
+	this->updateSelftest();
 
 	errorState.ErrorStateWorker();
 }
@@ -187,33 +188,25 @@ void menuView::TempUnitToggled(){
 	adaptUiToUnits();
 }
 
-//ADD FUNCTION WHEN SELFTEST GPIO IS CONNECTED!
-//void menuView::updateSelftest() {
-//	Vpx_CoreStateTypeDef state = CoreCom_CoreState();
-//
-//	if(HAL_GPIO_ReadPin(SELFTEST_GPIO_Port, SELFTEST_Pin) == GPIO_PIN_RESET && !showingSelftestQuestion) {
-//		showingSelftestQuestion = true;
-//
-//	    modalWrapper.sheduleDecisionModal(
-//	    		touchgfx::TypedText(T_SELFTESTTITLE),
-//				touchgfx::TypedText(T_SELFTESTQUESTIONBODY),
-//				startReflowDecisionCallback);
-//	}
-//
-//	if(state.selftest_active && !selftestActiveOpened) {
-//		modalWrapper.showOverlayInfo(
-//				touchgfx::TypedText(T_SELFTESTTITLE),
-//				touchgfx::TypedText(T_SELFTESTRUNNINGBODY));
-//
-//		selftestActiveOpened = true;
-//	} else if(!state.selftest_active && selftestActiveOpened) {
-//		modalWrapper.hideOverlayInfo();
-//
-//		selftestActiveOpened = false;
-//	}
-//}
+void menuView::updateSelftest(){
+	// Button is active low. Holding it for selftestHoldTimeMs starts the
+	// selftest once per press (replaces the confirmation, filters bouncing).
+	if(HAL_GPIO_ReadPin(SELFTEST_GPIO_Port, SELFTEST_Pin) != GPIO_PIN_RESET){
+		selftestPressedSinceMs = 0;
+		selftestTriggered = false;
+		return;
+	}
 
+	if(selftestPressedSinceMs == 0){
+		selftestPressedSinceMs = HAL_GetTick();
+	}
 
+	if(!selftestTriggered && HAL_GetTick() - selftestPressedSinceMs >= selftestHoldTimeMs){
+		selftestTriggered = true;
+		vpx_log("Selftest button held");
+		CoreCom_StartSelftest();
+	}
+}
 
 void menuView::adaptUiToUnits(){
 	if(currentUnit == CELSIUS){

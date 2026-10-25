@@ -180,7 +180,7 @@ static void CoreCom_UpdateState()
   core_state = temp_state;
   taskEXIT_CRITICAL();
 
-  // SD_SetSelftestActive(core_state.selftest_active);
+  SD_SetSelftestActive(core_state.selftest_active);
 }
 
 #if MOCK_COMMUNICATION

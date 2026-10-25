@@ -102,6 +102,10 @@ protected:
     const uint32_t galdenTempUpdateIntervalMs = 1000;
     const uint32_t coolantTempUpdateIntervalMs = 1000;
 
+    const uint32_t selftestHoldTimeMs = 2000;
+    uint32_t selftestPressedSinceMs = 0;
+    bool selftestTriggered = false;
+
     TemperatureUnit currentUnit = CELSIUS;
     float galdenTemperatureCelsius = 0.0f;
     float coolantTemperatureCelsius = 0.0f;

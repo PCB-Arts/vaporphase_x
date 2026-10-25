@@ -121,6 +121,15 @@ void SD_SetSelftestActive(bool active)
   taskEXIT_CRITICAL();
 }
 
+void SD_Log_OnUnmount(void)
+{
+  if (selftestFileOpened)
+  {
+    sd_close_selftest_logfile();
+    selftestFileOpened = false;
+  }
+}
+
 char SD_Log_WriteBuffer[SD_LOG_WRITE_BUFFER_SIZE_BYTES];
 void SD_Log_Worker(void)
 {

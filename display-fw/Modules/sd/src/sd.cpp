@@ -103,6 +103,7 @@ void SD_Mount()
 static void SD_Unmount()
 {
   ReflowLog_OnUnmount();
+  SD_Log_OnUnmount();
 
   vpx_log("SD ejected");
 

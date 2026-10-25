@@ -90,7 +90,13 @@ bool State_CanStartReflow()
 
 bool State_CanStartSelftest()
 {
-  return State_BaseStartCondition() &&
+  // Not while the lid or the lift moves (opening, closing, service position);
+  // the selftest moves both itself
+  const LidState lid_state = lid_control_lid_state();
+  const bool lid_at_rest =
+      lid_state == LID_STATE_CLOSED || lid_state == LID_STATE_OPEN;
+
+  return State_BaseStartCondition() && lid_at_rest &&
          State_StartSelftestGaldenTemperatureCondition();
 }
 
