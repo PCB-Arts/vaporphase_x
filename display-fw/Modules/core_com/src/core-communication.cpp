@@ -389,6 +389,21 @@ void CoreCom_OpenLid()
 #endif
 }
 
+void CoreCom_ServicePosition()
+{
+  if (core_state.error)
+  {
+    return;
+  }
+#if MOCK_COMMUNICATION
+  core_state.can_open_lid = false;
+  core_state.lid_state = LID_STATE_OPEN;
+  core_state.can_start_reflow = false;
+#else
+  CoreCom_SetBool(VPX_PROP_SERVICE_POSITION, true);
+#endif
+}
+
 void CoreCom_CloseLid()
 {
 #if MOCK_COMMUNICATION

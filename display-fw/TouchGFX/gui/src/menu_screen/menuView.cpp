@@ -725,7 +725,19 @@ void menuView::modalWindowDecisionNo_btn_onClick(){
 }
 
 void menuView::options_lid_service_button_onClick(){
-	//callback function --> send command to core to move to service position
+	Vpx_CoreStateTypeDef coreState = CoreCom_CoreState();
+	vpx_log("Service position pushed");
+
+	// Same conditions as opening the lid. Not with the lid open: the lift doesn't move then.
+	if(!(coreState.can_open_lid && coreState.lid_state == LID_STATE_CLOSED)) {
+		modalWrapper.sheduleInformationModal(
+				touchgfx::TypedText(T_LIDCONDITIONERRORTITLE),
+				touchgfx::TypedText(T_LIDCONDITIONERRORBODY),
+				openLidErrorCallback);
+		return;
+	}
+
+	CoreCom_ServicePosition();
 }
 
 void menuView::options_sd_card_button_export_onClick(){

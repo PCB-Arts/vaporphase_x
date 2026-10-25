@@ -32,6 +32,9 @@ bool lid_control_lid_boot_ready();
 
 void lid_control_lid_open();
 void lid_control_lid_close();
+
+// move the lift to the top, then open the lid (if it is closed)
+void lid_control_service_position();
 LidState lid_control_lid_state();
 
 void lid_control_set_lid_open_mode(LidOpenMode lidOpenMode);

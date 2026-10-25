@@ -167,6 +167,28 @@ void State_SetLidOpen(bool open)
   vpx_log(open ? "open lid" : "close lid");
 }
 
+void State_SetServicePosition()
+{
+  Vpx_CoreStateTypeDef state = State_getState();
+
+  if (state.error)
+  {
+    vpx_log("SetServicePosition on Error state");
+    return;
+  }
+
+  // same conditions as opening the lid; with the lid open the lift doesn't
+  // move on the device, so it's only allowed with the lid closed
+  if (!state.can_open_lid)
+  {
+    vpx_log("SetServicePosition conditions not met");
+    return;
+  }
+
+  lid_control_service_position();
+  vpx_log("service position");
+}
+
 /*
  * Returns true if the requirements to leave boot state are fullfiled
  */
