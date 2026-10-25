@@ -27,6 +27,9 @@ public:
 
     struct Settings{
     	int openTemperature;
+    	// exactly 1: record reflows to SD. Off otherwise, also with settings
+    	// saved before this field existed (0) and with erased flash (0xFF..).
+    	int reflowLogEnabled;
     };
 
 private:
@@ -89,6 +92,7 @@ protected:
     void loadSettingsFromFlash();
     HAL_StatusTypeDef saveSettings();
     void restoreOpenTemperature();
+    void updateReflowLogSetting();
 
     //void startErrorCallback();
     //void stopReflowDecisionCallback(bool answer);

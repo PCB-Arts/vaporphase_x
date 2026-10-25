@@ -7,6 +7,7 @@
 #include "main.h"
 #include "core-communication.hpp"
 #include "sd.hpp"
+#include "reflow_log.hpp"
 #include "unitConverter.hpp"
 //#include "UiErrorState.hpp"
 
@@ -40,6 +41,7 @@ menuView::menuView():
 
 	loadSettingsFromFlash();
 	restoreOpenTemperature();
+	updateReflowLogSetting();
 }
 
 void menuView::restoreOpenTemperature(){
@@ -664,6 +666,7 @@ void menuView::options_button_profile_set_onClick(){
 
 	    CoreCom_SendGalden(selectedProfile);		//Core communication to send Galden Boilingtemperature of .csv
 		CoreCom_SendACT(selectedProfile);
+		ReflowLog_SetProfile(profilePath.c_str(), profileTemperaturesS, profileDurationS);
 	    drawSetHeatProfileGraph();
 		adaptGraphTimeAxis();
 
@@ -726,7 +729,26 @@ void menuView::options_lid_service_button_onClick(){
 }
 
 void menuView::options_sd_card_button_export_onClick(){
-	//callback function --> export values of profile to sd card
+	// toggles "Reflow recording active"
+	currentSettings.reflowLogEnabled = currentSettings.reflowLogEnabled == 1 ? 0 : 1;
+	this->saveSettings();
+	updateReflowLogSetting();
+}
+
+// The button shows the current state: yes = reflows are recorded
+void menuView::updateReflowLogSetting(){
+	const bool enabled = currentSettings.reflowLogEnabled == 1;
+	vpx_log("Reflow recording active: %s", enabled ? "on" : "off");
+	ReflowLog_SetEnabled(enabled);
+
+	if(enabled){
+		options_sd_card_button_export.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_YES_ID), touchgfx::Bitmap(BITMAP_BUTTON_YES_PUSHED_ID));
+	} else {
+		options_sd_card_button_export.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_NO_ID), touchgfx::Bitmap(BITMAP_BUTTON_NO_PUSHED_ID));
+	}
+	// the images are 45 px high, the button 60 px
+	options_sd_card_button_export.setBitmapXY(0, 7);
+	options_sd_card_button_export.invalidate();
 }
 
 void menuView::updateLogging(){

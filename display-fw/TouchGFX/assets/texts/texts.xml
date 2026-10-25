@@ -10,7 +10,7 @@
         <Translation Language="GB">Service position</Translation>
       </Text>
       <Text Id="__SingleUse_369K" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">Export solder profile </Translation>
+        <Translation Language="GB">Reflow recording active</Translation>
       </Text>
       <Text Id="__SingleUse_611K" Alignment="Left" TypographyId="Default">
         <Translation Language="GB">Profile aborted</Translation>

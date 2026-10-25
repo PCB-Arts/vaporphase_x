@@ -22,6 +22,7 @@
 
 #include "logging.h"
 #include "memory_card.h"
+#include "reflow_log.hpp"
 
 #include "log.h"
 
@@ -101,6 +102,8 @@ void SD_Mount()
 
 static void SD_Unmount()
 {
+  ReflowLog_OnUnmount();
+
   vpx_log("SD ejected");
 
   sd_log_write_line(100, "x - DISP: SD unmounted.");
@@ -149,6 +152,7 @@ static void SD_Task(void *argument)
     {
       SD_Log_Worker();
     }
+    ReflowLog_Worker();
 
     osDelay(10);
   }
