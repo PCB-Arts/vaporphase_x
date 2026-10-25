@@ -131,6 +131,11 @@ static HAL_StatusTypeDef ReadBlocks(uint8_t *pData, uint32_t BlockAdd,
     return status;
   }
   status = WaitDmaBusy(SD_TIMEOUT);
+  if (status == HAL_TIMEOUT)
+  {
+    /* Stop the transfer, else hsd1 stays busy and the next one fails */
+    HAL_SD_Abort(&hsd1);
+  }
   return status;
 }
 static HAL_StatusTypeDef WriteBlocks(const uint8_t *pData, uint32_t BlockAdd,
@@ -144,9 +149,30 @@ static HAL_StatusTypeDef WriteBlocks(const uint8_t *pData, uint32_t BlockAdd,
     return status;
   }
   status = WaitDmaBusy(SD_TIMEOUT);
+  if (status == HAL_TIMEOUT)
+  {
+    /* Stop the transfer, else hsd1 stays busy and the next one fails */
+    HAL_SD_Abort(&hsd1);
+  }
   return status;
 }
 #endif
+/*-----------------------------------------------------------------------*/
+
+/* Wait until the card is ready for the next transfer or until timeout */
+static DRESULT WaitCardTransferState(void)
+{
+  uint32_t tickstart = HAL_GetTick();
+  while (HAL_SD_GetCardState(&hsd1) != HAL_SD_CARD_TRANSFER)
+  {
+    if ((HAL_GetTick() - tickstart) >= SD_TIMEOUT)
+    {
+      return RES_ERROR;
+    }
+  }
+  return RES_OK;
+}
+
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */
 /*-----------------------------------------------------------------------*/
@@ -200,11 +226,7 @@ DRESULT disk_read(BYTE pdrv,  /* Physical drive nmuber to identify the drive */
 
   if (ReadBlocks((uint8_t *)buff, sector, count) == HAL_OK)
   {
-    /* Wait until the card state is ready */
-    while (HAL_SD_GetCardState(&hsd1) != HAL_SD_CARD_TRANSFER)
-    {
-    }
-    res = RES_OK;
+    res = WaitCardTransferState();
   }
   return res;
 }
@@ -229,11 +251,7 @@ DRESULT disk_write(BYTE pdrv, /* Physical drive nmuber to identify the drive */
 
   if (WriteBlocks((const uint8_t *)buff, sector, count) == HAL_OK)
   {
-    /* Wait until the card state is ready */
-    while (HAL_SD_GetCardState(&hsd1) != HAL_SD_CARD_TRANSFER)
-    {
-    }
-    res = RES_OK;
+    res = WaitCardTransferState();
   }
   return res;
 }

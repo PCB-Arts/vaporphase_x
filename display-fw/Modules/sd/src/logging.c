@@ -22,6 +22,7 @@
 #include <stdbool.h>
 #include <stream_buffer.h>
 #include <string.h>
+#include <task.h>
 
 #include "ff.h"
 #include "logging.h"
@@ -104,23 +105,20 @@ static bool selftestFileOpened = false;
 static uint32_t selftest_started;
 void SD_SetSelftestActive(bool active)
 {
-  if (selftestActive == active)
-  {
-    return;
-  }
+  taskENTER_CRITICAL();
 
-  if (active)
+  if (active && !selftestActive)
   {
     selftest_started = HAL_GetTick();
   }
 
   // hysterese of 3s
-  if (!active && HAL_GetTick() - selftest_started < 3000)
+  if (active || HAL_GetTick() - selftest_started >= 3000)
   {
-    return;
+    selftestActive = active;
   }
 
-  selftestActive = active;
+  taskEXIT_CRITICAL();
 }
 
 char SD_Log_WriteBuffer[SD_LOG_WRITE_BUFFER_SIZE_BYTES];

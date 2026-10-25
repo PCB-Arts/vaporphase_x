@@ -47,6 +47,7 @@
 /* USER CODE BEGIN Includes */
 #include "sdmmc.h"
 #include "core-communication.hpp"
+#include "log.h"
 #include "sd.hpp"
 #include "tinyprintf.h"
 
@@ -181,6 +182,8 @@ int main(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LCD_DISP_RESET_GPIO_Port, LCD_DISP_RESET_Pin, GPIO_PIN_SET);
+
+  vpx_log_init();
 
   initCommunicationStack();
 
