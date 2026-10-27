@@ -75,13 +75,13 @@
             "Height": 480,
             "SwipeCutoff": 50,
             "ShowPageIndicator": true,
-            "PageIndicatorX": 382,
+            "PageIndicatorX": 376,
             "PageIndicatorY": 10,
             "CenteredX": true,
             "IndicatorImageNormal": "__generated\\light_theme_images_widgets_swipecontainer_small_off_normal.png",
             "IndicatorImageHighlight": "__generated\\light_theme_images_widgets_swipecontainer_small_on_normal.png",
             "EndSwipeElasticWidth": 50,
-            "SelectedPage": "graphs",
+            "SelectedPage": "options_general",
             "Components": [
               {
                 "Type": "Container",
@@ -519,31 +519,15 @@
               },
               {
                 "Type": "Container",
-                "Name": "options",
+                "Name": "options_sd",
                 "Width": 800,
                 "Height": 480,
                 "Components": [
                   {
                     "Type": "TextArea",
-                    "Name": "options_temp_unit_label",
-                    "X": 48,
-                    "Y": 65,
-                    "Width": 127,
-                    "Height": 25,
-                    "TextId": "__SingleUse_3O9T",
-                    "TextRotation": "0",
-                    "Color": {
-                      "Red": 255,
-                      "Green": 255,
-                      "Blue": 255
-                    },
-                    "AutoSize": true
-                  },
-                  {
-                    "Type": "TextArea",
                     "Name": "options_sd_card_label",
                     "X": 48,
-                    "Y": 132,
+                    "Y": 65,
                     "Width": 72,
                     "Height": 25,
                     "TextId": "__SingleUse_TT7P",
@@ -557,12 +541,12 @@
                   },
                   {
                     "Type": "TextArea",
-                    "Name": "options_lid_temp_label",
+                    "Name": "options_sd_card_export_label",
                     "X": 48,
-                    "Y": 194,
-                    "Width": 164,
+                    "Y": 134,
+                    "Width": 184,
                     "Height": 25,
-                    "TextId": "__SingleUse_W2EE",
+                    "TextId": "__SingleUse_369K",
                     "TextRotation": "0",
                     "Color": {
                       "Red": 255,
@@ -591,7 +575,7 @@
                     "Type": "FlexButton",
                     "Name": "options_sd_card_button_mount",
                     "X": 585,
-                    "Y": 114,
+                    "Y": 47,
                     "Width": 170,
                     "Height": 60,
                     "Visible": false,
@@ -610,7 +594,7 @@
                     "Type": "FlexButton",
                     "Name": "options_sd_card_button_eject",
                     "X": 587,
-                    "Y": 114,
+                    "Y": 47,
                     "Width": 170,
                     "Height": 60,
                     "ButtonTrigger": {
@@ -626,10 +610,10 @@
                   },
                   {
                     "Type": "FlexButton",
-                    "Name": "options_openlid_tem_button_eco",
-                    "X": 358,
-                    "Y": 180,
-                    "Width": 120,
+                    "Name": "options_sd_card_button_export",
+                    "X": 587,
+                    "Y": 116,
+                    "Width": 170,
                     "Height": 60,
                     "ButtonTrigger": {
                       "Type": "TouchButtonTrigger"
@@ -637,26 +621,8 @@
                     "ButtonStyles": [
                       {
                         "Type": "ImageButtonStyle",
-                        "ImageReleased": "button-eco.png",
-                        "ImagePressed": "button-eco-pushed_green.png"
-                      }
-                    ]
-                  },
-                  {
-                    "Type": "FlexButton",
-                    "Name": "options_openlid_tem_button_standard",
-                    "X": 501,
-                    "Y": 180,
-                    "Width": 120,
-                    "Height": 60,
-                    "ButtonTrigger": {
-                      "Type": "TouchButtonTrigger"
-                    },
-                    "ButtonStyles": [
-                      {
-                        "Type": "ImageButtonStyle",
-                        "ImageReleased": "button-standard.png",
-                        "ImagePressed": "button-standard-pushed_green.png"
+                        "ImageReleased": "button-eject.png",
+                        "ImagePressed": "button-eject-push.png"
                       }
                     ]
                   },
@@ -679,24 +645,6 @@
                     ]
                   },
                   {
-                    "Type": "FlexButton",
-                    "Name": "options_openlid_tem_button_fast",
-                    "X": 633,
-                    "Y": 180,
-                    "Width": 120,
-                    "Height": 60,
-                    "ButtonTrigger": {
-                      "Type": "TouchButtonTrigger"
-                    },
-                    "ButtonStyles": [
-                      {
-                        "Type": "ImageButtonStyle",
-                        "ImageReleased": "button-fast.png",
-                        "ImagePressed": "button-fast-pushed_green.png"
-                      }
-                    ]
-                  },
-                  {
                     "Type": "ScrollWheel",
                     "Name": "options_solder_profile_wheel",
                     "X": 85,
@@ -711,16 +659,6 @@
                     "SwipeAcceleration": 1.0,
                     "DragAcceleration": 1.0,
                     "OverShootPercentage": 75
-                  },
-                  {
-                    "Type": "ToggleButton",
-                    "Name": "options_temp_toggle_button",
-                    "X": 587,
-                    "Y": 47,
-                    "Width": 170,
-                    "Height": 60,
-                    "Pressed": "switch-fahrenheit-medium.png",
-                    "Released": "switch-celsius-medium.png"
                   },
                   {
                     "Type": "Circle",
@@ -739,6 +677,144 @@
                     "Radius": 5.0,
                     "EndAngle": 360.0,
                     "CapPrecision": "Butt"
+                  }
+                ]
+              },
+              {
+                "Type": "Container",
+                "Name": "options_general",
+                "Width": 800,
+                "Height": 480,
+                "Components": [
+                  {
+                    "Type": "TextArea",
+                    "Name": "options_temp_unit_label",
+                    "X": 48,
+                    "Y": 65,
+                    "Width": 127,
+                    "Height": 25,
+                    "TextId": "__SingleUse_3O9T",
+                    "TextRotation": "0",
+                    "Color": {
+                      "Red": 255,
+                      "Green": 255,
+                      "Blue": 255
+                    },
+                    "AutoSize": true
+                  },
+                  {
+                    "Type": "TextArea",
+                    "Name": "options_lid_temp_label",
+                    "X": 48,
+                    "Y": 146,
+                    "Width": 164,
+                    "Height": 25,
+                    "TextId": "__SingleUse_W2EE",
+                    "TextRotation": "0",
+                    "Color": {
+                      "Red": 255,
+                      "Green": 255,
+                      "Blue": 255
+                    },
+                    "AutoSize": true
+                  },
+                  {
+                    "Type": "TextArea",
+                    "Name": "options_lid_service_label",
+                    "X": 48,
+                    "Y": 223,
+                    "Width": 140,
+                    "Height": 25,
+                    "TextId": "__SingleUse_CAMV",
+                    "TextRotation": "0",
+                    "Color": {
+                      "Red": 255,
+                      "Green": 255,
+                      "Blue": 255
+                    },
+                    "AutoSize": true
+                  },
+                  {
+                    "Type": "FlexButton",
+                    "Name": "options_openlid_tem_button_eco",
+                    "X": 358,
+                    "Y": 132,
+                    "Width": 120,
+                    "Height": 60,
+                    "ButtonTrigger": {
+                      "Type": "TouchButtonTrigger"
+                    },
+                    "ButtonStyles": [
+                      {
+                        "Type": "ImageButtonStyle",
+                        "ImageReleased": "button-eco.png",
+                        "ImagePressed": "button-eco-pushed_green.png"
+                      }
+                    ]
+                  },
+                  {
+                    "Type": "FlexButton",
+                    "Name": "options_openlid_tem_button_standard",
+                    "X": 501,
+                    "Y": 132,
+                    "Width": 120,
+                    "Height": 60,
+                    "ButtonTrigger": {
+                      "Type": "TouchButtonTrigger"
+                    },
+                    "ButtonStyles": [
+                      {
+                        "Type": "ImageButtonStyle",
+                        "ImageReleased": "button-standard.png",
+                        "ImagePressed": "button-standard-pushed_green.png"
+                      }
+                    ]
+                  },
+                  {
+                    "Type": "FlexButton",
+                    "Name": "options_openlid_tem_button_fast",
+                    "X": 633,
+                    "Y": 132,
+                    "Width": 120,
+                    "Height": 60,
+                    "ButtonTrigger": {
+                      "Type": "TouchButtonTrigger"
+                    },
+                    "ButtonStyles": [
+                      {
+                        "Type": "ImageButtonStyle",
+                        "ImageReleased": "button-fast.png",
+                        "ImagePressed": "button-fast-pushed_green.png"
+                      }
+                    ]
+                  },
+                  {
+                    "Type": "ToggleButton",
+                    "Name": "options_temp_toggle_button",
+                    "X": 587,
+                    "Y": 47,
+                    "Width": 170,
+                    "Height": 60,
+                    "Pressed": "switch-fahrenheit-medium.png",
+                    "Released": "switch-celsius-medium.png"
+                  },
+                  {
+                    "Type": "FlexButton",
+                    "Name": "options_lid_service_button",
+                    "X": 585,
+                    "Y": 205,
+                    "Width": 170,
+                    "Height": 60,
+                    "ButtonTrigger": {
+                      "Type": "TouchButtonTrigger"
+                    },
+                    "ButtonStyles": [
+                      {
+                        "Type": "ImageButtonStyle",
+                        "ImageReleased": "button-eject.png",
+                        "ImagePressed": "button-eject-push.png"
+                      }
+                    ]
                   }
                 ]
               }
@@ -1057,6 +1133,28 @@
             "Action": {
               "Type": "ActionExecuteCode",
               "Code": "menu_container.setSelectedPage(1);"
+            }
+          },
+          {
+            "InteractionName": "options_lid_service_button_on_click",
+            "Trigger": {
+              "Type": "TriggerClicked",
+              "TriggerComponent": "options_lid_service_button"
+            },
+            "Action": {
+              "Type": "ActionCustom",
+              "FunctionName": "options_lid_service_button_onClick"
+            }
+          },
+          {
+            "InteractionName": "options_sd_card_button_export_onClick",
+            "Trigger": {
+              "Type": "TriggerClicked",
+              "TriggerComponent": "options_sd_card_button_export"
+            },
+            "Action": {
+              "Type": "ActionCustom",
+              "FunctionName": "options_sd_card_button_export_onClick"
             }
           }
         ]

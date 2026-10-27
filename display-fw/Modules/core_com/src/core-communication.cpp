@@ -20,9 +20,11 @@
 #include <math.h>
 #include <sd.hpp>
 
+#include "FreeRTOS.h"
 #include "cmsis_os2.h"
 #include "conf.h"
 #include "log.h"
+#include "task.h"
 #include "version.h"
 #include "vpx_protocol.h"
 
@@ -63,7 +65,9 @@ static void CoreCom_UpdateCoreTime()
     return;
   }
 
+  taskENTER_CRITICAL();
   core_operation_time = time_prop.i64;
+  taskEXIT_CRITICAL();
 }
 
 static void CoreCom_UpdatePcbTemperature()
@@ -74,7 +78,9 @@ static void CoreCom_UpdatePcbTemperature()
     return;
   }
 
+  taskENTER_CRITICAL();
   core_pcb_temperature = pcb_temp_prop.i64;
+  taskEXIT_CRITICAL();
 }
 
 static void CoreCom_UpdateLiquidTemperature()
@@ -85,7 +91,9 @@ static void CoreCom_UpdateLiquidTemperature()
     return;
   }
 
+  taskENTER_CRITICAL();
   core_liquid_temperature = galden_temp_prop.i64;
+  taskEXIT_CRITICAL();
 }
 
 static void CoreCom_UpdateCoolantTemperature()
@@ -96,7 +104,9 @@ static void CoreCom_UpdateCoolantTemperature()
     return;
   }
 
+  taskENTER_CRITICAL();
   core_coolant_temperature = coolant_temperature_prop.i64;
+  taskEXIT_CRITICAL();
 }
 
 static void CoreCom_UpdateMonitorState()
@@ -149,8 +159,10 @@ static void CoreCom_UpdateMonitorState()
   state.lid_position = state3.lid_position;
   state.lift_position = state3.lift_position;
 
+  taskENTER_CRITICAL();
   monitor_state = state;
   monitor_state_new = true;
+  taskEXIT_CRITICAL();
 }
 
 static void CoreCom_UpdateState()
@@ -164,9 +176,11 @@ static void CoreCom_UpdateState()
   }
 
   memcpy(&temp_state, state_prop.data, sizeof(temp_state));
+  taskENTER_CRITICAL();
   core_state = temp_state;
+  taskEXIT_CRITICAL();
 
-  // SD_SetSelftestActive(core_state.selftest_active);
+  SD_SetSelftestActive(core_state.selftest_active);
 }
 
 #if MOCK_COMMUNICATION
@@ -253,21 +267,68 @@ void CoreCom_Init()
       osThreadNew(CoreCom_Task, NULL, &CoreCom_Task_attributes);
 }
 
-int32_t CoreCom_CoreOperationTime() { return core_operation_time; }
+int32_t CoreCom_CoreOperationTime()
+{
+  taskENTER_CRITICAL();
+  const int32_t value = core_operation_time;
+  taskEXIT_CRITICAL();
+  return value;
+}
 
-uint64_t CoreCom_PcbTemperature() { return core_pcb_temperature; }
+uint64_t CoreCom_PcbTemperature()
+{
+  taskENTER_CRITICAL();
+  const int64_t value = core_pcb_temperature;
+  taskEXIT_CRITICAL();
+  return value;
+}
 
-uint64_t CoreCom_LiquidTemperature() { return core_liquid_temperature; }
+uint64_t CoreCom_LiquidTemperature()
+{
+  taskENTER_CRITICAL();
+  const int64_t value = core_liquid_temperature;
+  taskEXIT_CRITICAL();
+  return value;
+}
 
-uint64_t CoreCom_CoolantTemperature() { return core_coolant_temperature; }
+uint64_t CoreCom_CoolantTemperature()
+{
+  taskENTER_CRITICAL();
+  const int64_t value = core_coolant_temperature;
+  taskEXIT_CRITICAL();
+  return value;
+}
 
-Vpx_CoreStateTypeDef CoreCom_CoreState() { return core_state; }
+Vpx_CoreStateTypeDef CoreCom_CoreState()
+{
+  taskENTER_CRITICAL();
+  const Vpx_CoreStateTypeDef value = core_state;
+  taskEXIT_CRITICAL();
+  return value;
+}
 
-void CoreCom_ReadMonitor() { monitor_state_new = false; }
+void CoreCom_ReadMonitor()
+{
+  taskENTER_CRITICAL();
+  monitor_state_new = false;
+  taskEXIT_CRITICAL();
+}
 
-bool CoreCom_HasNewMonitor() { return monitor_state_new; }
+bool CoreCom_HasNewMonitor()
+{
+  taskENTER_CRITICAL();
+  const bool value = monitor_state_new;
+  taskEXIT_CRITICAL();
+  return value;
+}
 
-Vpx_CoreMonitorStateComplete CoreCom_GetMonitorState() { return monitor_state; }
+Vpx_CoreMonitorStateComplete CoreCom_GetMonitorState()
+{
+  taskENTER_CRITICAL();
+  const Vpx_CoreMonitorStateComplete value = monitor_state;
+  taskEXIT_CRITICAL();
+  return value;
+}
 
 static void CoreCom_SetBool(int prop_id, bool value)
 {
@@ -325,6 +386,21 @@ void CoreCom_OpenLid()
   core_state.can_start_reflow = false;
 #else
   CoreCom_SetBool(VPX_PROP_LID_OPEN, true);
+#endif
+}
+
+void CoreCom_ServicePosition()
+{
+  if (core_state.error)
+  {
+    return;
+  }
+#if MOCK_COMMUNICATION
+  core_state.can_open_lid = false;
+  core_state.lid_state = LID_STATE_OPEN;
+  core_state.can_start_reflow = false;
+#else
+  CoreCom_SetBool(VPX_PROP_SERVICE_POSITION, true);
 #endif
 }
 
@@ -530,9 +606,11 @@ void CoreCom_StartSelftest()
 #if !MOCK_COMMUNICATION
   SD_SetSelftestActive(true);
 
+  taskENTER_CRITICAL();
   core_state.can_start_reflow = false;
   core_state.can_start_selftest = false;
   core_state.can_open_lid = false;
+  taskEXIT_CRITICAL();
   CoreCom_SetBool(VPX_PROP_SELFTEST_ACTIVE, true);
 
 #endif

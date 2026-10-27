@@ -163,6 +163,7 @@ static void seq_fsm()
     else
     {
       vpx_log("profile aborted - in preheat");
+      cS.currentState = 0;
       seq_state = SEQ_IDLE;
     }
     break;
@@ -226,6 +227,7 @@ static void seq_fsm()
   case SEQ_CLEANUP:
     if (lift_axis.motor->direction == DIRECTION_NONE)
     {
+      cS.currentState = 0;
       seq_state = SEQ_IDLE;
     }
     break;

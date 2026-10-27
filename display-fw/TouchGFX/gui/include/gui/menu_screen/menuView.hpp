@@ -27,11 +27,14 @@ public:
 
     struct Settings{
     	int openTemperature;
+    	// exactly 1: record reflows to SD. Off otherwise, also with settings
+    	// saved before this field existed (0) and with erased flash (0xFF..).
+    	int reflowLogEnabled;
     };
 
 private:
 
-    constexpr static int maxProfileDuration = 600;
+    constexpr static int maxProfileDuration = SOLDERPROFILE_MAX_DURATION_S;
     int profileDurationS = 600;
     float profileTemperaturesS[maxProfileDuration];
     float measuredTemperaturesS[maxProfileDuration];
@@ -46,6 +49,8 @@ private:
     bool isProfileSelected = false;
     bool startReflowEnabled = true;
     bool openLidEnabled = true;
+
+    int shownCurrentState = -1; // core state shown in state_text, -1: none yet
 
     int SolderProfilesVersion = -1;
     std::vector<std::string> solderProfiles;
@@ -72,6 +77,9 @@ protected:
     void modalWindowInformationClose_btn_onClick();
     void modalWindowDecisionYes_btn_onClick();
     void modalWindowDecisionNo_btn_onClick();
+    void options_lid_service_button_onClick();
+    void options_sd_card_button_export_onClick();
+
 
 
     void drawSetHeatProfileGraph();
@@ -84,6 +92,7 @@ protected:
     void loadSettingsFromFlash();
     HAL_StatusTypeDef saveSettings();
     void restoreOpenTemperature();
+    void updateReflowLogSetting();
 
     //void startErrorCallback();
     //void stopReflowDecisionCallback(bool answer);
@@ -92,6 +101,10 @@ protected:
     const uint32_t pcbTempUpdateIntervalMs = 1000;
     const uint32_t galdenTempUpdateIntervalMs = 1000;
     const uint32_t coolantTempUpdateIntervalMs = 1000;
+
+    const uint32_t selftestHoldTimeMs = 2000;
+    uint32_t selftestPressedSinceMs = 0;
+    bool selftestTriggered = false;
 
     TemperatureUnit currentUnit = CELSIUS;
     float galdenTemperatureCelsius = 0.0f;

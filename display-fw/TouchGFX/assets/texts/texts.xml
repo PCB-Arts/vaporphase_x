@@ -6,6 +6,12 @@
   <Texts>
     <TextGroup Id="Group1" />
     <TextGroup Id="Unsorted">
+      <Text Id="__SingleUse_CAMV" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Service position</Translation>
+      </Text>
+      <Text Id="__SingleUse_369K" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Reflow recording active</Translation>
+      </Text>
       <Text Id="__SingleUse_611K" Alignment="Left" TypographyId="Default">
         <Translation Language="GB">Profile aborted</Translation>
       </Text>
@@ -50,6 +56,12 @@
       </Text>
       <Text Id="StartConditionErrorTitle" Alignment="Left" TypographyId="Default_fat">
         <Translation Language="GB">Start reflow condition not met</Translation>
+      </Text>
+      <Text Id="InvalidProfileTitle" Alignment="Left" TypographyId="Default_fat">
+        <Translation Language="GB">Invalid solder profile</Translation>
+      </Text>
+      <Text Id="InvalidProfileBody" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">The solder profile could not be loaded. Please check the profile file.</Translation>
       </Text>
       <Text Id="ProcessCancelTitle" Alignment="Left" TypographyId="Default_fat">
         <Translation Language="GB">Cancel Reflow</Translation>

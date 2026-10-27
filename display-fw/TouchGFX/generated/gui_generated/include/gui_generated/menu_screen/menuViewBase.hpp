@@ -21,8 +21,8 @@
 #include <touchgfx/widgets/AnimationTextureMapper.hpp>
 #include <touchgfx/containers/scrollers/ScrollWheel.hpp>
 #include <gui/containers/custom_container_profile_select.hpp>
-#include <touchgfx/widgets/ToggleButton.hpp>
 #include <touchgfx/widgets/canvas/Circle.hpp>
+#include <touchgfx/widgets/ToggleButton.hpp>
 #include <touchgfx/containers/ModalWindow.hpp>
 
 class menuViewBase : public touchgfx::View<menuPresenter>
@@ -96,6 +96,14 @@ public:
     {
         // Override and implement this function in menu
     }
+    virtual void options_lid_service_button_onClick()
+    {
+        // Override and implement this function in menu
+    }
+    virtual void options_sd_card_button_export_onClick()
+    {
+        // Override and implement this function in menu
+    }
 
 protected:
     FrontendApplication& application() {
@@ -138,22 +146,27 @@ protected:
     touchgfx::Box abortedProfileBackground;
     touchgfx::TextArea abortedProfileText;
     touchgfx::AnimationTextureMapper rotatingCoolingSign;
-    touchgfx::Container options;
-    touchgfx::TextArea options_temp_unit_label;
+    touchgfx::Container options_sd;
     touchgfx::TextArea options_sd_card_label;
-    touchgfx::TextArea options_lid_temp_label;
+    touchgfx::TextArea options_sd_card_export_label;
     touchgfx::TextArea options_solder_profile_label;
     touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  options_sd_card_button_mount;
     touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  options_sd_card_button_eject;
-    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  options_openlid_tem_button_eco;
-    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  options_openlid_tem_button_standard;
+    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  options_sd_card_button_export;
     touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  options_button_profile_set;
-    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  options_openlid_tem_button_fast;
     touchgfx::ScrollWheel options_solder_profile_wheel;
     touchgfx::DrawableListItems<custom_container_profile_select, 4> options_solder_profile_wheelListItems;
-    touchgfx::ToggleButton options_temp_toggle_button;
     touchgfx::Circle SelectedProfileMarker;
     touchgfx::PainterRGB888 SelectedProfileMarkerPainter;
+    touchgfx::Container options_general;
+    touchgfx::TextArea options_temp_unit_label;
+    touchgfx::TextArea options_lid_temp_label;
+    touchgfx::TextArea options_lid_service_label;
+    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  options_openlid_tem_button_eco;
+    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  options_openlid_tem_button_standard;
+    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  options_openlid_tem_button_fast;
+    touchgfx::ToggleButton options_temp_toggle_button;
+    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  options_lid_service_button;
     touchgfx::ModalWindow modalWindowDecision;
     touchgfx::TextArea modalWindowDecisionTitle;
     touchgfx::TextArea modalWindowDecisionBody;

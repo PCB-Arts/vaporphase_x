@@ -8,6 +8,8 @@ Release/
 # STM32CubeIDE
 .metadata/
 .settings/
+# Eclipse project of the repository root, created when opening the repo itself
+/.project
 # Workspaces of the command-line builds (tools/common.mk)
 /.cubeide-ws/
 

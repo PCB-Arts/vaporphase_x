@@ -63,6 +63,17 @@ int app_prop_set(int prop_id, const union prop_value *val, size_t val_len)
     }
     return 0;
 
+  case VPX_PROP_SERVICE_POSITION:
+    if (val_len < sizeof(bool))
+    {
+      return -PRES_INVALID_REQUEST;
+    }
+    if (val->bl)
+    {
+      State_SetServicePosition();
+    }
+    return 0;
+
   default:
     return -PRES_PROPERTY_NOT_FOUND;
   }

@@ -32,6 +32,10 @@ static volatile uint8_t packet_counter = 0;
 #define MAX_WATCHED_PROPS 64
 #endif
 
+#ifndef MIN
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#endif
+
 struct prop_watch_desc
 {
   int prop_id;
@@ -253,15 +257,22 @@ int usart_sync_await_response(void *out, size_t out_len, uint8_t packet_id)
 
     if (packet_res_buf->header.packet_type == PTYPE_ERROR)
     {
-      int len = packet_res_payload_len;
-      if (len > sizeof(remote_errmsg) - 1)
-        len = sizeof(remote_errmsg) - 1;
+      // every error response starts with the return code, the message follows
+      const size_t rc_len = sizeof(packet_res_buf->payload.res_error.rc);
+      if (packet_res_payload_len < rc_len)
+      {
+        packet_res_buf = NULL;
+        return -PRES_COMMS_ERROR;
+      }
+      const int32_t rc = packet_res_buf->payload.res_error.rc;
+      const size_t msg_len =
+          MIN(packet_res_payload_len - rc_len, sizeof(remote_errmsg_buf) - 1);
       memcpy(remote_errmsg_buf, (char *)packet_res_buf->payload.res_error.msg,
-             len);
-      remote_errmsg_buf[len] = '\0';
-      packet_res_buf = NULL;
+             msg_len);
+      remote_errmsg_buf[msg_len] = '\0';
 
-      return -(PRES_REMOTE_ERROR | packet_res_buf->payload.res_error.rc);
+      packet_res_buf = NULL;
+      return -(PRES_REMOTE_ERROR | rc);
     }
     else
     {

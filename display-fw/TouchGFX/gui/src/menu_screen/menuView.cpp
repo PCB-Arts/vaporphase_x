@@ -7,6 +7,7 @@
 #include "main.h"
 #include "core-communication.hpp"
 #include "sd.hpp"
+#include "reflow_log.hpp"
 #include "unitConverter.hpp"
 //#include "UiErrorState.hpp"
 
@@ -40,6 +41,7 @@ menuView::menuView():
 
 	loadSettingsFromFlash();
 	restoreOpenTemperature();
+	updateReflowLogSetting();
 }
 
 void menuView::restoreOpenTemperature(){
@@ -144,6 +146,9 @@ void menuView::setupScreen()
     menuViewBase::setupScreen();
     graph_target.setTouchable(false);
     graph_actual.setTouchable(false);
+
+    // Only here and on unit toggle: it rebuilds both graphs completely
+    adaptUiToUnits();
 }
 
 void menuView::tearDownScreen()
@@ -161,11 +166,11 @@ void menuView::updateTemperatureAndState(){
 void menuView::handleTickEvent()
 {
 	this->updateTemperatureAndState();
-	this->adaptUiToUnits();
 	this->updateButtonStates();
 	this->updateSolderProfiles();
 	this->updateTemperatureGraph();
 	this->updateLogging();
+	this->updateSelftest();
 
 	errorState.ErrorStateWorker();
 }
@@ -183,33 +188,25 @@ void menuView::TempUnitToggled(){
 	adaptUiToUnits();
 }
 
-//ADD FUNCTION WHEN SELFTEST GPIO IS CONNECTED!
-//void menuView::updateSelftest() {
-//	Vpx_CoreStateTypeDef state = CoreCom_CoreState();
-//
-//	if(HAL_GPIO_ReadPin(SELFTEST_GPIO_Port, SELFTEST_Pin) == GPIO_PIN_RESET && !showingSelftestQuestion) {
-//		showingSelftestQuestion = true;
-//
-//	    modalWrapper.sheduleDecisionModal(
-//	    		touchgfx::TypedText(T_SELFTESTTITLE),
-//				touchgfx::TypedText(T_SELFTESTQUESTIONBODY),
-//				startReflowDecisionCallback);
-//	}
-//
-//	if(state.selftest_active && !selftestActiveOpened) {
-//		modalWrapper.showOverlayInfo(
-//				touchgfx::TypedText(T_SELFTESTTITLE),
-//				touchgfx::TypedText(T_SELFTESTRUNNINGBODY));
-//
-//		selftestActiveOpened = true;
-//	} else if(!state.selftest_active && selftestActiveOpened) {
-//		modalWrapper.hideOverlayInfo();
-//
-//		selftestActiveOpened = false;
-//	}
-//}
+void menuView::updateSelftest(){
+	// Button is active low. Holding it for selftestHoldTimeMs starts the
+	// selftest once per press (replaces the confirmation, filters bouncing).
+	if(HAL_GPIO_ReadPin(SELFTEST_GPIO_Port, SELFTEST_Pin) != GPIO_PIN_RESET){
+		selftestPressedSinceMs = 0;
+		selftestTriggered = false;
+		return;
+	}
 
+	if(selftestPressedSinceMs == 0){
+		selftestPressedSinceMs = HAL_GetTick();
+	}
 
+	if(!selftestTriggered && HAL_GetTick() - selftestPressedSinceMs >= selftestHoldTimeMs){
+		selftestTriggered = true;
+		vpx_log("Selftest button held");
+		CoreCom_StartSelftest();
+	}
+}
 
 void menuView::adaptUiToUnits(){
 	if(currentUnit == CELSIUS){
@@ -256,6 +253,8 @@ void menuView::updateCoolantTemperatureLabel() {
 	DegreeCelcius coolant_temperature_celsius = CoreCom_CoolantTemperature() / 1000;
 	float temp = celsiusToUnit(coolant_temperature_celsius, currentUnit);
 
+	// Invalidate the old extent too, else a shorter text leaves stray pixels
+	cooling_temp_text.invalidate();
 	Unicode::snprintfFloat(cooling_temp_textBuffer1, COOLING_TEMP_TEXTBUFFER1_SIZE,"%.0f", temp);
 	cooling_temp_text.resizeToCurrentText();
 	cooling_temp_text.invalidate();
@@ -272,6 +271,8 @@ void menuView::updatePCBTemperatureLabel() {
 	DegreeCelcius pcb_temperature_celsius = CoreCom_PcbTemperature() / 1000;
 	float temp = celsiusToUnit(pcb_temperature_celsius, currentUnit);
 
+	// Invalidate the old extent too, else a shorter text leaves stray pixels
+	pcb_temp_text.invalidate();
 	Unicode::snprintfFloat(pcb_temp_textBuffer1, PCB_TEMP_TEXTBUFFER1_SIZE,"%.0f", temp);
 	pcb_temp_text.resizeToCurrentText();
 	pcb_temp_text.invalidate();
@@ -287,6 +288,8 @@ void menuView::updateGaldenTemperatureLabel() {
 	DegreeCelcius galden_temperature_celcius = CoreCom_LiquidTemperature() / 1000;
 	float temp = celsiusToUnit(galden_temperature_celcius, currentUnit);
 
+	// Invalidate the old extent too, else a shorter text leaves stray pixels
+	galden_temp_text.invalidate();
 	Unicode::snprintfFloat(galden_temp_textBuffer1, GALDEN_TEMP_TEXTBUFFER1_SIZE,"%.0f", temp);
 	galden_temp_text.resizeToCurrentText();
 	galden_temp_text.invalidate();
@@ -295,39 +298,26 @@ void menuView::updateGaldenTemperatureLabel() {
 
 void menuView::updateCurrentState(){
 	Vpx_CoreStateTypeDef coreState = CoreCom_CoreState();
-	if(coreState.current_state == CS_Preheat){
-		//Clear Display
-		Unicode::strncpy(state_textBuffer, "\0" , 12);
-		state_text.invalidate();
-
-		Unicode::strncpy(state_textBuffer,"Preheat", 8);
-		state_text.resizeToCurrentText();
-		state_text.invalidate();
+	const int state = coreState.current_state;
+	if(state == shownCurrentState){
+		return;
 	}
-	else if(coreState.current_state == CS_Soldering){
-		Unicode::strncpy(state_textBuffer,"Soldering", 10);
-		state_text.resizeToCurrentText();
-		state_text.invalidate();
-		}
-	else if(coreState.current_state == CS_AntiCondensation){
-		Unicode::strncpy(state_textBuffer,"Quick cool",11);
-		state_text.resizeToCurrentText();
-		state_text.invalidate();
-		}
-	else if(coreState.current_state == CS_Calibration){
-		Unicode::strncpy(state_textBuffer,"Calibrating",12);
-		state_text.resizeToCurrentText();
-		state_text.invalidate();
-	}
-	else{
-		Unicode::strncpy(state_textBuffer, "\0" , 12);
-		state_text.invalidate();
+	shownCurrentState = state;
 
-		Unicode::strncpy(state_textBuffer, "Idle", 5);
-		state_text.resizeToCurrentText();
-		state_text.invalidate();
-
+	const char* text;
+	switch(state){
+	case CS_Preheat:          text = "Preheat";     break;
+	case CS_Soldering:        text = "Soldering";   break;
+	case CS_AntiCondensation: text = "Quick cool";  break;
+	case CS_Calibration:      text = "Calibrating"; break;
+	default:                  text = "Idle";        break;
 	}
+
+	// Invalidate the old extent too, else a shorter text leaves stray pixels
+	state_text.invalidate();
+	Unicode::strncpy(state_textBuffer, text, STATE_TEXT_SIZE);
+	state_text.resizeToCurrentText();
+	state_text.invalidate();
 }
 
 //void menuView::adaptUiToUnits(){
@@ -530,7 +520,7 @@ void menuView::options_openlid_tem_button_fast_onClick(){
     }
 
 void menuView::options_sd_card_button_mount_onClick(){
-     SD_Mount();
+	SD_SheduleMount();
 }
 
 void menuView::options_sd_card_button_eject_onClick(){
@@ -632,7 +622,15 @@ void menuView::options_button_profile_set_onClick(){
 		std::string profilePath = solderProfiles[itemIndex];
 		selectedProfile = loadSolderCsv(profilePath);
 		if(!selectedProfile.valid){
-			SD_SheduleUnmount();
+			if(selectedProfile.readError){
+				SD_SheduleUnmount();
+			} else {
+				// the reason is in the log
+				vpx_log("Profile %s is invalid", profilePath.c_str());
+				modalWrapper.sheduleInformationModal(
+						touchgfx::TypedText(T_INVALIDPROFILETITLE),
+						touchgfx::TypedText(T_INVALIDPROFILEBODY));
+			}
 			return;
 		}
 		vpx_log("Profile %s selected", profilePath.c_str());
@@ -661,6 +659,7 @@ void menuView::options_button_profile_set_onClick(){
 
 	    CoreCom_SendGalden(selectedProfile);		//Core communication to send Galden Boilingtemperature of .csv
 		CoreCom_SendACT(selectedProfile);
+		ReflowLog_SetProfile(profilePath.c_str(), profileTemperaturesS, profileDurationS);
 	    drawSetHeatProfileGraph();
 		adaptGraphTimeAxis();
 
@@ -716,6 +715,45 @@ void menuView::modalWindowDecisionYes_btn_onClick(){
 void menuView::modalWindowDecisionNo_btn_onClick(){
 	modalWrapper.closeModal(false);
 
+}
+
+void menuView::options_lid_service_button_onClick(){
+	Vpx_CoreStateTypeDef coreState = CoreCom_CoreState();
+	vpx_log("Service position pushed");
+
+	// Same conditions as opening the lid. Not with the lid open: the lift doesn't move then.
+	if(!(coreState.can_open_lid && coreState.lid_state == LID_STATE_CLOSED)) {
+		modalWrapper.sheduleInformationModal(
+				touchgfx::TypedText(T_LIDCONDITIONERRORTITLE),
+				touchgfx::TypedText(T_LIDCONDITIONERRORBODY),
+				openLidErrorCallback);
+		return;
+	}
+
+	CoreCom_ServicePosition();
+}
+
+void menuView::options_sd_card_button_export_onClick(){
+	// toggles "Reflow recording active"
+	currentSettings.reflowLogEnabled = currentSettings.reflowLogEnabled == 1 ? 0 : 1;
+	this->saveSettings();
+	updateReflowLogSetting();
+}
+
+// The button shows the current state: yes = reflows are recorded
+void menuView::updateReflowLogSetting(){
+	const bool enabled = currentSettings.reflowLogEnabled == 1;
+	vpx_log("Reflow recording active: %s", enabled ? "on" : "off");
+	ReflowLog_SetEnabled(enabled);
+
+	if(enabled){
+		options_sd_card_button_export.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_YES_ID), touchgfx::Bitmap(BITMAP_BUTTON_YES_PUSHED_ID));
+	} else {
+		options_sd_card_button_export.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_NO_ID), touchgfx::Bitmap(BITMAP_BUTTON_NO_PUSHED_ID));
+	}
+	// the images are 45 px high, the button 60 px
+	options_sd_card_button_export.setBitmapXY(0, 7);
+	options_sd_card_button_export.invalidate();
 }
 
 void menuView::updateLogging(){

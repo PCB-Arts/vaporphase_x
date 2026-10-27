@@ -22,6 +22,7 @@
 
 #include "logging.h"
 #include "memory_card.h"
+#include "reflow_log.hpp"
 
 #include "log.h"
 
@@ -48,39 +49,8 @@ static volatile bool SD_mounted = false;
 static volatile bool SD_should_unmount = false;
 static volatile bool SD_should_mount = false;
 
-FATFS fs;
-FIL file;
-FRESULT fres;
-UINT bytesWritten, bytesRead;
-
-char writeData[] = "FatFS 18.07.2025\n";
-char readData[100];
-
-void SD_Test_Rtos()
-{
-
-  // Mount SD card <-- mounting works
-  fres = f_mount(&fs, "0", 1);
-  if (fres != FR_OK)
-  {
-  }
-
-  // Create or overwrite file
-  fres = f_open(&file, "testfile.txt", FA_WRITE | FA_CREATE_ALWAYS);
-  if (fres != FR_OK)
-  {
-  }
-
-  fres = f_write(&file, writeData, strlen(writeData), &bytesWritten);
-  if (fres != FR_OK || bytesWritten == 0)
-  {
-    f_close(&file);
-  }
-
-  f_close(&file);
-
-  f_mount(NULL, "", 1);
-}
+#define SD_PRESENCE_CHECK_INTERVAL_MS 1000
+static uint32_t SD_last_presence_check_ms = 0;
 
 void SD_Init()
 {
@@ -91,7 +61,7 @@ void SD_Init()
   SD_Log_Init();
 }
 
-void SD_Mount()
+static void SD_Mount()
 {
 
   bool mount_success = false;
@@ -135,6 +105,9 @@ void SD_Mount()
 
 static void SD_Unmount()
 {
+  ReflowLog_OnUnmount();
+  SD_Log_OnUnmount();
+
   vpx_log("SD ejected");
 
   sd_log_write_line(100, "x - DISP: SD unmounted.");
@@ -148,6 +121,24 @@ static void SD_Unmount()
   SD_should_unmount = false;
 }
 
+// A card pulled without eject is unmounted automatically, so nothing keeps
+// writing to it and the UI offers "mount" again
+static void SD_CheckPresence()
+{
+  if (HAL_GetTick() - SD_last_presence_check_ms < SD_PRESENCE_CHECK_INTERVAL_MS)
+  {
+    return;
+  }
+  SD_last_presence_check_ms = HAL_GetTick();
+
+  if (sd_card_removed())
+  {
+    vpx_log("SD card removed without eject");
+    SD_Unmount();
+    SD_error_state.removed_without_unmount = true;
+  }
+}
+
 static void SD_Mount_Worker()
 {
   if (SD_mounted)
@@ -155,6 +146,10 @@ static void SD_Mount_Worker()
     if (SD_should_unmount)
     {
       SD_Unmount();
+    }
+    else
+    {
+      SD_CheckPresence();
     }
   }
   else
@@ -183,6 +178,7 @@ static void SD_Task(void *argument)
     {
       SD_Log_Worker();
     }
+    ReflowLog_Worker();
 
     osDelay(10);
   }

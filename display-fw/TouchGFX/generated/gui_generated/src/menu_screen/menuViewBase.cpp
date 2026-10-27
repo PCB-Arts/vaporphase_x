@@ -24,7 +24,7 @@ menuViewBase::menuViewBase() :
 
     menu_container.setXY(0, 0);
     menu_container.setPageIndicatorBitmaps(touchgfx::Bitmap(BITMAP_LIGHT_THEME_IMAGES_WIDGETS_SWIPECONTAINER_SMALL_OFF_NORMAL_ID), touchgfx::Bitmap(BITMAP_LIGHT_THEME_IMAGES_WIDGETS_SWIPECONTAINER_SMALL_ON_NORMAL_ID));
-    menu_container.setPageIndicatorXY(382, 10);
+    menu_container.setPageIndicatorXY(376, 10);
     menu_container.setSwipeCutoff(50);
     menu_container.setEndSwipeElasticWidth(50);
 
@@ -216,68 +216,50 @@ menuViewBase::menuViewBase() :
 
     menu_container.add(graphs);
 
-    options.setWidth(800);
-    options.setHeight(480);
-    options_temp_unit_label.setXY(48, 65);
-    options_temp_unit_label.setColor(touchgfx::Color::getColorFromRGB(255, 255, 255));
-    options_temp_unit_label.setLinespacing(0);
-    options_temp_unit_label.setTypedText(touchgfx::TypedText(T___SINGLEUSE_3O9T));
-    options.add(options_temp_unit_label);
-
-    options_sd_card_label.setXY(48, 132);
+    options_sd.setWidth(800);
+    options_sd.setHeight(480);
+    options_sd_card_label.setXY(48, 65);
     options_sd_card_label.setColor(touchgfx::Color::getColorFromRGB(255, 255, 255));
     options_sd_card_label.setLinespacing(0);
     options_sd_card_label.setTypedText(touchgfx::TypedText(T___SINGLEUSE_TT7P));
-    options.add(options_sd_card_label);
+    options_sd.add(options_sd_card_label);
 
-    options_lid_temp_label.setXY(48, 194);
-    options_lid_temp_label.setColor(touchgfx::Color::getColorFromRGB(255, 255, 255));
-    options_lid_temp_label.setLinespacing(0);
-    options_lid_temp_label.setTypedText(touchgfx::TypedText(T___SINGLEUSE_W2EE));
-    options.add(options_lid_temp_label);
+    options_sd_card_export_label.setXY(48, 134);
+    options_sd_card_export_label.setColor(touchgfx::Color::getColorFromRGB(255, 255, 255));
+    options_sd_card_export_label.setLinespacing(0);
+    options_sd_card_export_label.setTypedText(touchgfx::TypedText(T___SINGLEUSE_369K));
+    options_sd.add(options_sd_card_export_label);
 
     options_solder_profile_label.setXY(48, 257);
     options_solder_profile_label.setColor(touchgfx::Color::getColorFromRGB(255, 255, 255));
     options_solder_profile_label.setLinespacing(0);
     options_solder_profile_label.setTypedText(touchgfx::TypedText(T___SINGLEUSE_FCSJ));
-    options.add(options_solder_profile_label);
+    options_sd.add(options_solder_profile_label);
 
     options_sd_card_button_mount.setBitmaps(Bitmap(BITMAP_BUTTON_MOUNT_MEDIUM_ID), Bitmap(BITMAP_BUTTON_MOUNT_PUSH_MEDIUM_ID));
     options_sd_card_button_mount.setBitmapXY(0, 0);
     options_sd_card_button_mount.setVisible(false);
     options_sd_card_button_mount.setAction(flexButtonCallback);
-    options_sd_card_button_mount.setPosition(585, 114, 170, 60);
-    options.add(options_sd_card_button_mount);
+    options_sd_card_button_mount.setPosition(585, 47, 170, 60);
+    options_sd.add(options_sd_card_button_mount);
 
     options_sd_card_button_eject.setBitmaps(Bitmap(BITMAP_BUTTON_EJECT_ID), Bitmap(BITMAP_BUTTON_EJECT_PUSH_ID));
     options_sd_card_button_eject.setBitmapXY(0, 0);
     options_sd_card_button_eject.setAction(flexButtonCallback);
-    options_sd_card_button_eject.setPosition(587, 114, 170, 60);
-    options.add(options_sd_card_button_eject);
+    options_sd_card_button_eject.setPosition(587, 47, 170, 60);
+    options_sd.add(options_sd_card_button_eject);
 
-    options_openlid_tem_button_eco.setBitmaps(Bitmap(BITMAP_BUTTON_ECO_ID), Bitmap(BITMAP_BUTTON_ECO_PUSHED_GREEN_ID));
-    options_openlid_tem_button_eco.setBitmapXY(0, 0);
-    options_openlid_tem_button_eco.setAction(flexButtonCallback);
-    options_openlid_tem_button_eco.setPosition(358, 180, 120, 60);
-    options.add(options_openlid_tem_button_eco);
-
-    options_openlid_tem_button_standard.setBitmaps(Bitmap(BITMAP_BUTTON_STANDARD_ID), Bitmap(BITMAP_BUTTON_STANDARD_PUSHED_GREEN_ID));
-    options_openlid_tem_button_standard.setBitmapXY(0, 0);
-    options_openlid_tem_button_standard.setAction(flexButtonCallback);
-    options_openlid_tem_button_standard.setPosition(501, 180, 120, 60);
-    options.add(options_openlid_tem_button_standard);
+    options_sd_card_button_export.setBitmaps(Bitmap(BITMAP_BUTTON_EJECT_ID), Bitmap(BITMAP_BUTTON_EJECT_PUSH_ID));
+    options_sd_card_button_export.setBitmapXY(0, 0);
+    options_sd_card_button_export.setAction(flexButtonCallback);
+    options_sd_card_button_export.setPosition(587, 116, 170, 60);
+    options_sd.add(options_sd_card_button_export);
 
     options_button_profile_set.setBitmaps(Bitmap(BITMAP_BUTTON_SET_ID), Bitmap(BITMAP_BUTTON_SET_PUSH_ID));
     options_button_profile_set.setBitmapXY(0, 0);
     options_button_profile_set.setAction(flexButtonCallback);
     options_button_profile_set.setPosition(637, 353, 120, 60);
-    options.add(options_button_profile_set);
-
-    options_openlid_tem_button_fast.setBitmaps(Bitmap(BITMAP_BUTTON_FAST_ID), Bitmap(BITMAP_BUTTON_FAST_PUSHED_GREEN_ID));
-    options_openlid_tem_button_fast.setBitmapXY(0, 0);
-    options_openlid_tem_button_fast.setAction(flexButtonCallback);
-    options_openlid_tem_button_fast.setPosition(633, 180, 120, 60);
-    options.add(options_openlid_tem_button_fast);
+    options_sd.add(options_button_profile_set);
 
     options_solder_profile_wheel.setPosition(85, 313, 500, 150);
     options_solder_profile_wheel.setHorizontal(false);
@@ -291,12 +273,7 @@ menuViewBase::menuViewBase() :
     options_solder_profile_wheel.setDrawableSize(50, 0);
     options_solder_profile_wheel.setDrawables(options_solder_profile_wheelListItems, updateItemCallback);
     options_solder_profile_wheel.animateToItem(0, 0);
-    options.add(options_solder_profile_wheel);
-
-    options_temp_toggle_button.setXY(587, 47);
-    options_temp_toggle_button.setBitmaps(touchgfx::Bitmap(BITMAP_SWITCH_CELSIUS_MEDIUM_ID), touchgfx::Bitmap(BITMAP_SWITCH_FAHRENHEIT_MEDIUM_ID));
-    options_temp_toggle_button.setAction(buttonCallback);
-    options.add(options_temp_toggle_button);
+    options_sd.add(options_solder_profile_wheel);
 
     SelectedProfileMarker.setPosition(75, 385, 15, 15);
     SelectedProfileMarker.setCenter(5, 5);
@@ -305,11 +282,62 @@ menuViewBase::menuViewBase() :
     SelectedProfileMarker.setArc(0, 360);
     SelectedProfileMarkerPainter.setColor(touchgfx::Color::getColorFromRGB(255, 255, 255));
     SelectedProfileMarker.setPainter(SelectedProfileMarkerPainter);
-    options.add(SelectedProfileMarker);
+    options_sd.add(SelectedProfileMarker);
 
-    menu_container.add(options);
+    menu_container.add(options_sd);
 
-    menu_container.setSelectedPage(1);
+    options_general.setWidth(800);
+    options_general.setHeight(480);
+    options_temp_unit_label.setXY(48, 65);
+    options_temp_unit_label.setColor(touchgfx::Color::getColorFromRGB(255, 255, 255));
+    options_temp_unit_label.setLinespacing(0);
+    options_temp_unit_label.setTypedText(touchgfx::TypedText(T___SINGLEUSE_3O9T));
+    options_general.add(options_temp_unit_label);
+
+    options_lid_temp_label.setXY(48, 146);
+    options_lid_temp_label.setColor(touchgfx::Color::getColorFromRGB(255, 255, 255));
+    options_lid_temp_label.setLinespacing(0);
+    options_lid_temp_label.setTypedText(touchgfx::TypedText(T___SINGLEUSE_W2EE));
+    options_general.add(options_lid_temp_label);
+
+    options_lid_service_label.setXY(48, 223);
+    options_lid_service_label.setColor(touchgfx::Color::getColorFromRGB(255, 255, 255));
+    options_lid_service_label.setLinespacing(0);
+    options_lid_service_label.setTypedText(touchgfx::TypedText(T___SINGLEUSE_CAMV));
+    options_general.add(options_lid_service_label);
+
+    options_openlid_tem_button_eco.setBitmaps(Bitmap(BITMAP_BUTTON_ECO_ID), Bitmap(BITMAP_BUTTON_ECO_PUSHED_GREEN_ID));
+    options_openlid_tem_button_eco.setBitmapXY(0, 0);
+    options_openlid_tem_button_eco.setAction(flexButtonCallback);
+    options_openlid_tem_button_eco.setPosition(358, 132, 120, 60);
+    options_general.add(options_openlid_tem_button_eco);
+
+    options_openlid_tem_button_standard.setBitmaps(Bitmap(BITMAP_BUTTON_STANDARD_ID), Bitmap(BITMAP_BUTTON_STANDARD_PUSHED_GREEN_ID));
+    options_openlid_tem_button_standard.setBitmapXY(0, 0);
+    options_openlid_tem_button_standard.setAction(flexButtonCallback);
+    options_openlid_tem_button_standard.setPosition(501, 132, 120, 60);
+    options_general.add(options_openlid_tem_button_standard);
+
+    options_openlid_tem_button_fast.setBitmaps(Bitmap(BITMAP_BUTTON_FAST_ID), Bitmap(BITMAP_BUTTON_FAST_PUSHED_GREEN_ID));
+    options_openlid_tem_button_fast.setBitmapXY(0, 0);
+    options_openlid_tem_button_fast.setAction(flexButtonCallback);
+    options_openlid_tem_button_fast.setPosition(633, 132, 120, 60);
+    options_general.add(options_openlid_tem_button_fast);
+
+    options_temp_toggle_button.setXY(587, 47);
+    options_temp_toggle_button.setBitmaps(touchgfx::Bitmap(BITMAP_SWITCH_CELSIUS_MEDIUM_ID), touchgfx::Bitmap(BITMAP_SWITCH_FAHRENHEIT_MEDIUM_ID));
+    options_temp_toggle_button.setAction(buttonCallback);
+    options_general.add(options_temp_toggle_button);
+
+    options_lid_service_button.setBitmaps(Bitmap(BITMAP_BUTTON_EJECT_ID), Bitmap(BITMAP_BUTTON_EJECT_PUSH_ID));
+    options_lid_service_button.setBitmapXY(0, 0);
+    options_lid_service_button.setAction(flexButtonCallback);
+    options_lid_service_button.setPosition(585, 205, 170, 60);
+    options_general.add(options_lid_service_button);
+
+    menu_container.add(options_general);
+
+    menu_container.setSelectedPage(3);
     add(menu_container);
 
     modalWindowDecision.setBackground(touchgfx::BitmapId(BITMAP_MODAL_BG_ID), 160, 104);
@@ -467,17 +495,17 @@ void menuViewBase::flexButtonCallbackHandler(const touchgfx::AbstractButtonConta
         //modalWindowDecisionYes_btn_onClick
         //When modalWindowDecisionYes clicked call virtual function
         //Call modalWindowDecisionYes_btn_onClick
-        modalWindowDecisionYes_btn_onClick();
+        modalWindowDecisionYes_btn_onClick();
         //showAbortedProfileBackgroound
         //When modalWindowDecisionYes clicked show abortedProfileBackground
         //Show abortedProfileBackground
         abortedProfileBackground.setVisible(true);
-        abortedProfileBackground.invalidate();
+        abortedProfileBackground.invalidate();
         //showAbortedProfileText
         //When modalWindowDecisionYes clicked show abortedProfileText
         //Show abortedProfileText
         abortedProfileText.setVisible(true);
-        abortedProfileText.invalidate();
+        abortedProfileText.invalidate();
         //showGraphWhenAborted
         //When modalWindowDecisionYes clicked execute C++ code
         //Execute C++ code
@@ -489,6 +517,20 @@ void menuViewBase::flexButtonCallbackHandler(const touchgfx::AbstractButtonConta
         //When modalWindowDecisionNo clicked call virtual function
         //Call modalWindowDecisionNo_btn_onClick
         modalWindowDecisionNo_btn_onClick();
+    }
+    if (&src == &options_lid_service_button)
+    {
+        //options_lid_service_button_on_click
+        //When options_lid_service_button clicked call virtual function
+        //Call options_lid_service_button_onClick
+        options_lid_service_button_onClick();
+    }
+    if (&src == &options_sd_card_button_export)
+    {
+        //options_sd_card_button_export_onClick
+        //When options_sd_card_button_export clicked call virtual function
+        //Call options_sd_card_button_export_onClick
+        options_sd_card_button_export_onClick();
     }
 }
 

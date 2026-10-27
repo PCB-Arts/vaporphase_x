@@ -294,14 +294,48 @@ int Main_FlashUserCoreFirmwareCallback(uint8_t *data, size_t offset,
   return DOWNLOAD_OK;
 }
 
+/**
+ * Print why COMMAND_ProgramFlashMemory failed.
+ * @param image name of the image shown in front of the message
+ * @param rc return code of COMMAND_ProgramFlashMemory
+ */
+static void Main_print_download_error(const char *image, uint32_t rc)
+{
+  switch (rc)
+  {
+  case DOWNLOAD_FILE_FAIL:
+    Main_LCD_printf("%s: SD card read error", image);
+    break;
+  case DOWNLOAD_SIGNATURE_FAIL:
+    Main_LCD_printf("%s: invalid signature", image);
+    break;
+  case DOWNLOAD_HASH_FAIL:
+    Main_LCD_printf("%s: checksum mismatch", image);
+    break;
+  case DOWNLOAD_ERASE_FAIL:
+    Main_LCD_printf("%s: flash erase error", image);
+    break;
+  case DOWNLOAD_WRITE_FAIL:
+    Main_LCD_printf("%s: flash write error", image);
+    break;
+  case DOWNLOAD_SIZE_FAIL:
+    Main_LCD_printf("%s: image too large", image);
+    break;
+  default:
+    Main_LCD_printf("%s: internal error", image);
+    break;
+  }
+}
+
 static int Main_FlashUserCoreFirmwareFile()
 {
   int rc;
 
   /* Do a dry-run first to make sure the signature is valid */
-  if (COMMAND_ProgramFlashMemory(&DownloadFile, NULL) != DOWNLOAD_OK)
+  uint32_t download_rc = COMMAND_ProgramFlashMemory(&DownloadFile, NULL);
+  if (download_rc != DOWNLOAD_OK)
   {
-    Main_LCD_printf("Core firmware image signature verification error");
+    Main_print_download_error("Core image check", download_rc);
     return 1;
   }
 
@@ -321,10 +355,11 @@ static int Main_FlashUserCoreFirmwareFile()
 
   /* Now do the actual programming. Verify the signature again to protect
    * against TOCTOU. */
-  if (COMMAND_ProgramFlashMemory(
-          &DownloadFile, Main_FlashUserCoreFirmwareCallback) != DOWNLOAD_OK)
+  download_rc = COMMAND_ProgramFlashMemory(&DownloadFile,
+                                           Main_FlashUserCoreFirmwareCallback);
+  if (download_rc != DOWNLOAD_OK)
   {
-    Main_LCD_printf("Programming error");
+    Main_print_download_error("Core programming", download_rc);
     return 1;
   }
 
@@ -362,9 +397,10 @@ int Main_FlashUserDisplayFirmwareCallback(uint8_t *data, size_t offset,
 static int Main_FlashUserDisplayFirmwareInternalFile()
 {
   /* Do a dry-run first to make sure the signature is valid */
-  if (COMMAND_ProgramFlashMemory(&DownloadFile, NULL) != DOWNLOAD_OK)
+  uint32_t download_rc = COMMAND_ProgramFlashMemory(&DownloadFile, NULL);
+  if (download_rc != DOWNLOAD_OK)
   {
-    Main_LCD_printf("Display firmware image signature verification error");
+    Main_print_download_error("Display image check", download_rc);
     return 1;
   }
 
@@ -384,10 +420,11 @@ static int Main_FlashUserDisplayFirmwareInternalFile()
   Main_LCD_printf("Erase complete. Programming display controller...");
   /* Now do the actual programming. Verify the signature again to protect
    * against TOCTOU. */
-  if (COMMAND_ProgramFlashMemory(
-          &DownloadFile, Main_FlashUserDisplayFirmwareCallback) != DOWNLOAD_OK)
+  download_rc = COMMAND_ProgramFlashMemory(
+      &DownloadFile, Main_FlashUserDisplayFirmwareCallback);
+  if (download_rc != DOWNLOAD_OK)
   {
-    Main_LCD_printf("Programming error");
+    Main_print_download_error("Display programming", download_rc);
     return 1;
   }
 
@@ -422,9 +459,10 @@ int Main_FlashUserDisplayExternalCallback(uint8_t *data, size_t offset,
 static int Main_FlashUserDisplayFirmwareExternalFile()
 {
   /* Do a dry-run first to make sure the signature is valid */
-  if (COMMAND_ProgramFlashMemory(&DownloadFile, NULL) != DOWNLOAD_OK)
+  uint32_t download_rc = COMMAND_ProgramFlashMemory(&DownloadFile, NULL);
+  if (download_rc != DOWNLOAD_OK)
   {
-    Main_LCD_printf("Firmware image signature verification error");
+    Main_print_download_error("Asset image check", download_rc);
     return 1;
   }
 
@@ -450,10 +488,11 @@ static int Main_FlashUserDisplayFirmwareExternalFile()
 
   /* Now do the actual programming. Verify the signature again to protect
    * against TOCTOU. */
-  if (COMMAND_ProgramFlashMemory(
-          &DownloadFile, Main_FlashUserDisplayExternalCallback) != DOWNLOAD_OK)
+  download_rc = COMMAND_ProgramFlashMemory(
+      &DownloadFile, Main_FlashUserDisplayExternalCallback);
+  if (download_rc != DOWNLOAD_OK)
   {
-    Main_LCD_printf("Programming error");
+    Main_print_download_error("Asset programming", download_rc);
     return 1;
   }
 
@@ -584,7 +623,8 @@ void Main_Menu(void)
       Main_LCD_Clear();
       for (int i = 0; i <= retry_counter; i++)
       {
-        Main_LCD_printf("Problem during core flashing. Retry %d", i);
+        Main_LCD_printf("Problem during core flashing. Retry %d of %d", i + 1,
+                        retry_counter + 1);
         rc = Main_FlashUserCoreFirmware();
         if (rc == 0)
         {
@@ -608,7 +648,8 @@ void Main_Menu(void)
     Main_LCD_Clear();
     for (int i = 0; i <= retry_counter; i++)
     {
-      Main_LCD_printf("Problem during display flashing. Retry %d", i);
+      Main_LCD_printf("Problem during display flashing. Retry %d of %d", i + 1,
+                      retry_counter + 1);
       rc = Main_FlashUserDisplayFirmwareInternal();
       if (rc == 0)
       {
@@ -631,7 +672,8 @@ void Main_Menu(void)
     Main_LCD_Clear();
     for (int i = 0; i <= retry_counter; i++)
     {
-      Main_LCD_printf("Problem during ext_display flashing. Retry %d", i);
+      Main_LCD_printf("Problem during ext_display flashing. Retry %d of %d",
+                      i + 1, retry_counter + 1);
       rc = Main_FlashUserDisplayFirmwareExternal();
       if (rc == 0)
       {

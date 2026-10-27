@@ -20,7 +20,11 @@
 #include <string>
 #include <vector>
 
-const std::string SOLDERPROFILE_FILEIDENTIFIER = "### VPX;";
+constexpr char SOLDERPROFILE_FILEIDENTIFIER_VPX[] = "### VPX;";
+constexpr char SOLDERPROFILE_FILEIDENTIFIER_VPO[] = "### VPO;";
+
+// The target curve is kept in arrays of this many seconds (menuView)
+constexpr int SOLDERPROFILE_MAX_DURATION_S = 600;
 
 class KeyValuePair
 {
@@ -57,6 +61,8 @@ class SolderProfile
 {
 public:
   bool valid = false;
+  // The file could not be read (e.g. SD card removed), not a parse error
+  bool readError = false;
 
   std::vector<KeyValuePair> headerAttributes;
   std::vector<SolderTemperatureDatapoint> timeTemperatureData;

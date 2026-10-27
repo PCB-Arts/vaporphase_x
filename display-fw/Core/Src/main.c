@@ -36,7 +36,6 @@
 #include "octospi.h"
 #include "rng.h"
 #include "rtc.h"
-#include "sdmmc.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -47,6 +46,7 @@
 /* USER CODE BEGIN Includes */
 #include "sdmmc.h"
 #include "core-communication.hpp"
+#include "log.h"
 #include "sd.hpp"
 #include "tinyprintf.h"
 
@@ -88,36 +88,6 @@ void initCommunicationStack(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void SD_TestWriteBlock(void)
-{
-    uint8_t test_data[512];  // 1 block = 512 bytes
-    uint32_t block_address = 0;  // Block address to write to (sector 0)
-
-    // Fill test_data with known pattern
-    for (int i = 0; i < sizeof(test_data); i++) {
-        test_data[i] = i & 0xFF;  // Just for example: 0x00, 0x01, ..., 0xFF, etc.
-    }
-
-    // Write 1 block (512 bytes) at sector 0
-    if (HAL_SD_WriteBlocks(&hsd1, test_data, block_address, 1, HAL_MAX_DELAY) != HAL_OK)
-    {
-        printf("SD write failed!\n");
-        Error_Handler();
-    }
-    else
-    {
-        printf("SD write success!\n");
-    }
-
-    // Wait until SD card is ready
-    while (HAL_SD_GetCardState(&hsd1) != HAL_SD_CARD_TRANSFER)
-    {
-        // Optional: small delay to prevent busy-waiting
-        HAL_Delay(1);
-    }
-
-    printf("SD card ready after write.\n");
-}
 
 void initCommunicationStack(void){
 	//MX_USART1_UART_Init();
@@ -195,7 +165,6 @@ int main(void)
   MX_TIM15_Init();
   MX_I2C1_Init();
   MX_USART1_UART_Init();
-  MX_SDMMC1_SD_Init();
   MX_TouchGFX_Init();
   /* Call PreOsInit function */
   MX_TouchGFX_PreOSInit();
@@ -203,51 +172,6 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
-  //MX_SDMMC1_SD_Init();
-
- /* FATFS TEST START */
- /*
-  	FATFS fs;
-	FIL file;
-	FRESULT fres;
-	UINT bytesWritten, bytesRead;
-
-	char writeData[] = "FatFS 18.07.2025\n";
-	char readData[100];
-
-
-	while(1){
-
-		// Mount SD card <-- mounting works
-		fres = f_mount(&fs, "0", 1);
-		if (fres != FR_OK) {
-		}
-
-
-		// Create or overwrite file
-		fres = f_open(&file, "testfile.txt", FA_WRITE | FA_CREATE_ALWAYS);
-		if (fres != FR_OK) {
-		}
-
-
-		fres = f_write(&file, writeData, strlen(writeData), &bytesWritten);
-		if (fres != FR_OK || bytesWritten == 0) {
-		  f_close(&file);
-		}
-
-
-		f_close(&file);
-
-		f_mount(NULL, "", 1);
-
-		HAL_Delay(100);
-	}
-
-	*/
-
-
-   /*FATFS TEST END */
-
   if (HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_1) != HAL_OK)
     {
       /* PWM Generation Error */
@@ -255,16 +179,11 @@ int main(void)
     }
 
   /*Configure GPIO pin Output Level */
-
   HAL_GPIO_WritePin(LCD_DISP_RESET_GPIO_Port, LCD_DISP_RESET_Pin, GPIO_PIN_SET);
 
+  vpx_log_init();
+
   initCommunicationStack();
-
-  //SD_Mount();
-
-  //SD_TestWriteBlock();
-
-
 
   SD_Init();
   /* USER CODE END 2 */
