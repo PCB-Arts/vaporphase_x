@@ -19,7 +19,7 @@ The projects can be built either via make or directly in STM32CubeIDE.
 Both produce the same build.
 Either way, Python 3 with ``tools/requirements.txt``
 (``pip install -r tools/requirements.txt``)
-is needed for the keys and signing (see `Signing`_).
+is needed for the keys and signing (see `Signing`_) and for plotting reflow logs.
 
 Via make
    - STM32CubeIDE (its headless builder is used)
