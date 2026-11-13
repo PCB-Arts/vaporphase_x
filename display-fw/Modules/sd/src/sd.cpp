@@ -50,7 +50,11 @@ static volatile bool SD_should_unmount = false;
 static volatile bool SD_should_mount = false;
 
 #define SD_PRESENCE_CHECK_INTERVAL_MS 1000
+// A single failed check can be a transfer error or a card that is still busy,
+// so only this many failed checks in a row count as removed
+#define SD_PRESENCE_CHECK_MAX_FAILURES 3
 static uint32_t SD_last_presence_check_ms = 0;
+static int SD_presence_check_failures = 0;
 
 void SD_Init()
 {
@@ -119,10 +123,12 @@ static void SD_Unmount()
 
   SD_mounted = false;
   SD_should_unmount = false;
+  SD_presence_check_failures = 0;
 }
 
-// A card pulled without eject is unmounted automatically, so nothing keeps
-// writing to it and the UI offers "mount" again
+// A card pulled without eject is unmounted automatically (after
+// SD_PRESENCE_CHECK_MAX_FAILURES failed checks), so nothing keeps writing to
+// it and the UI offers "mount" again
 static void SD_CheckPresence()
 {
   if (HAL_GetTick() - SD_last_presence_check_ms < SD_PRESENCE_CHECK_INTERVAL_MS)
@@ -131,12 +137,20 @@ static void SD_CheckPresence()
   }
   SD_last_presence_check_ms = HAL_GetTick();
 
-  if (sd_card_removed())
+  if (sd_card_check() == FR_OK)
   {
-    vpx_log("SD card removed without eject");
-    SD_Unmount();
-    SD_error_state.removed_without_unmount = true;
+    SD_presence_check_failures = 0;
+    return;
   }
+
+  if (++SD_presence_check_failures < SD_PRESENCE_CHECK_MAX_FAILURES)
+  {
+    return;
+  }
+
+  vpx_log("SD card removed without eject");
+  SD_Unmount();
+  SD_error_state.removed_without_unmount = true;
 }
 
 static void SD_Mount_Worker()
@@ -174,7 +188,10 @@ static void SD_Task(void *argument)
   while (true)
   {
     SD_Mount_Worker();
-    if (SD_mounted)
+    // Not while the card fails the presence check: a failed write drops the
+    // lines taken from the log buffer. They stay buffered until the card
+    // answers again or is mounted again.
+    if (SD_mounted && SD_presence_check_failures == 0)
     {
       SD_Log_Worker();
     }
