@@ -16,6 +16,7 @@
  */
 
 #include "memory_card.h"
+#include "log.h"
 #include "main.h"
 #include "sdmmc.h"
 
@@ -51,8 +52,12 @@ static int sd_card_init(void)
 
 int sd_mount(void)
 {
+  /* The log shows which step failed. The lines are written to the card with
+   * the next successful mount. */
   if (sd_card_init() != 0)
   {
+    vpx_log("SD mount failed: card init (HAL error 0x%x)",
+            (unsigned int)hsd1.ErrorCode);
     return -1;
   }
 
@@ -60,11 +65,18 @@ int sd_mount(void)
   FRESULT result = f_mount(&SDFatFs, (TCHAR const *)SDPath, 1);
   if (result != FR_OK)
   {
-    /* FatFs Initialization Error */
+    vpx_log("SD mount failed: file system (FatFs result %d)", (int)result);
     return -1;
   }
 
-  return sd_open_logfile() == FR_OK ? 0 : -1;
+  result = sd_open_logfile();
+  if (result != FR_OK)
+  {
+    vpx_log("SD mount failed: log file (FatFs result %d)", (int)result);
+    return -1;
+  }
+
+  return 0;
 }
 
 int sd_unmount(void)

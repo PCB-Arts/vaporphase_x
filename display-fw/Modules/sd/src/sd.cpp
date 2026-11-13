@@ -19,6 +19,7 @@
 #include <sd.hpp>
 #include <stdbool.h>
 #include <string.h>
+#include <tinyprintf.h>
 
 #include "logging.h"
 #include "memory_card.h"
@@ -107,14 +108,18 @@ static void SD_Mount()
   DataLoadCounter++;
 }
 
-static void SD_Unmount()
+// The reason goes into the last line of the log file. It is written directly:
+// lines logged now only reach the card with the next mount.
+static void SD_Unmount(const char *reason)
 {
   ReflowLog_OnUnmount();
   SD_Log_OnUnmount();
 
-  vpx_log("SD ejected");
+  vpx_log("SD unmounted: %s", reason);
 
-  sd_log_write_line(100, "x - DISP: SD unmounted.");
+  char line[100];
+  tfp_snprintf(line, sizeof(line), "x - DISP: SD unmounted: %s.", reason);
+  sd_log_write_line(sizeof(line), line);
 
   DataLoadCounter++;
   AvailableCSVProfiles.clear();
@@ -137,19 +142,25 @@ static void SD_CheckPresence()
   }
   SD_last_presence_check_ms = HAL_GetTick();
 
-  if (sd_card_check() == FR_OK)
+  const int fatfs_result = sd_card_check();
+  if (fatfs_result == FR_OK)
   {
     SD_presence_check_failures = 0;
     return;
   }
 
-  if (++SD_presence_check_failures < SD_PRESENCE_CHECK_MAX_FAILURES)
+  SD_presence_check_failures++;
+  vpx_log("SD card check failed (FatFs result %d), %d of %d", fatfs_result,
+          SD_presence_check_failures, SD_PRESENCE_CHECK_MAX_FAILURES);
+  if (SD_presence_check_failures < SD_PRESENCE_CHECK_MAX_FAILURES)
   {
     return;
   }
 
-  vpx_log("SD card removed without eject");
-  SD_Unmount();
+  char reason[48];
+  tfp_snprintf(reason, sizeof(reason), "removal detected (FatFs result %d)",
+               fatfs_result);
+  SD_Unmount(reason);
   SD_error_state.removed_without_unmount = true;
 }
 
@@ -159,7 +170,7 @@ static void SD_Mount_Worker()
   {
     if (SD_should_unmount)
     {
-      SD_Unmount();
+      SD_Unmount("ejected");
     }
     else
     {

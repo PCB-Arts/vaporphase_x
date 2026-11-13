@@ -170,12 +170,27 @@ static void CoreCom_UpdateState()
   union prop_value state_prop;
   Vpx_CoreStateTypeDef temp_state;
 
-  if (usart_sync_prop_get(VPX_PROP_CORE_STATE, &state_prop))
+  const int result = usart_sync_prop_get(VPX_PROP_CORE_STATE, &state_prop);
+  if (result)
   {
+    // the displayed state (e.g. the lid buttons) is outdated until the next
+    // successful poll
+    vpx_log("Core state poll failed (%d)", result);
     return;
   }
 
   memcpy(&temp_state, state_prop.data, sizeof(temp_state));
+
+  static const char *const lid_state_names[] = {
+      "undefined", "initialising", "closed", "open",
+      "opening",   "closing",      "error"};
+  if (temp_state.lid_state != core_state.lid_state &&
+      temp_state.lid_state <
+          sizeof(lid_state_names) / sizeof(lid_state_names[0]))
+  {
+    vpx_log("Lid state: %s", lid_state_names[temp_state.lid_state]);
+  }
+
   taskENTER_CRITICAL();
   core_state = temp_state;
   taskEXIT_CRITICAL();

@@ -55,6 +55,49 @@ void lid_init()
   lid_axis.lim_sw_fwd.trigger_propagation_delay_ms = 50;
 }
 
+// Logs start and stop of every lid move, so a lid that reaches its limit
+// switch late or pushes against something (overcurrent) shows in the log
+static enum direction_t lid_logged_direction = DIRECTION_NONE;
+static uint32_t lid_move_started_ms;
+static bool lid_move_overcurrent_logged;
+
+static void lid_move_log_worker()
+{
+  const enum direction_t direction = lid_motor.direction;
+  const int elapsed_ms = (int)(HAL_GetTick() - lid_move_started_ms);
+
+  if (direction == lid_logged_direction)
+  {
+    if (direction != DIRECTION_NONE && !lid_move_overcurrent_logged &&
+        iopin_read(overcurrent_pin) == GPIO_PIN_SET)
+    {
+      lid_move_overcurrent_logged = true;
+      vpx_log("Lid overcurrent after %d ms", elapsed_ms);
+    }
+    return;
+  }
+
+  if (lid_logged_direction != DIRECTION_NONE)
+  {
+    const bool opening = lid_logged_direction == FWD;
+    const bool at_switch = opening
+                               ? axis_forward_limit_switch_active(&lid_axis)
+                               : axis_backward_limit_switch_active(&lid_axis);
+    vpx_log("Lid %s stopped after %d ms: %s", opening ? "opening" : "closing",
+            elapsed_ms,
+            at_switch ? "limit switch reached" : "limit switch not reached");
+  }
+
+  if (direction != DIRECTION_NONE)
+  {
+    vpx_log("Lid %s started", direction == FWD ? "opening" : "closing");
+    lid_move_started_ms = HAL_GetTick();
+    lid_move_overcurrent_logged = false;
+  }
+
+  lid_logged_direction = direction;
+}
+
 void lid_worker()
 {
   if (iopin_read(overcurrent_pin) == GPIO_PIN_SET)
@@ -62,6 +105,7 @@ void lid_worker()
     lid_overcurrent_isr();
   }
   axis_worker(&lid_axis);
+  lid_move_log_worker();
 }
 
 const char *lid_status()
