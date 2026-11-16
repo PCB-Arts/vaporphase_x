@@ -15,16 +15,46 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  */
 
+#include <FreeRTOS.h>
 #include <cmsis_os2.h>
 #include <sd.hpp>
+#include <semphr.h>
+#include <stdbool.h>
 #include <tinyprintf.h>
 
 #include "log.h"
 
+// Several tasks log (GUI, SD, core communication), and they share the two
+// buffers. A line that doesn't get the lock in time is dropped.
+#define LOG_LOCK_TIMEOUT_TICKS 30
+
+static SemaphoreHandle_t log_mutex = NULL;
+static StaticSemaphore_t log_mutex_buffer;
+
 static char log_buffer_1[128];
 static char log_buffer_2[128];
 
-void vpx_component_log(const char *message, const char *component)
+void vpx_log_init(void)
+{
+  log_mutex = xSemaphoreCreateMutexStatic(&log_mutex_buffer);
+}
+
+// Before vpx_log_init() only main() runs, so there is nothing to lock yet
+static bool log_lock(void)
+{
+  return log_mutex == NULL ||
+         xSemaphoreTake(log_mutex, LOG_LOCK_TIMEOUT_TICKS) == pdTRUE;
+}
+
+static void log_unlock(void)
+{
+  if (log_mutex != NULL)
+  {
+    xSemaphoreGive(log_mutex);
+  }
+}
+
+static void component_log_locked(const char *message, const char *component)
 {
   tfp_snprintf(log_buffer_2, sizeof(log_buffer_2), "%d:%s: %s",
                (int)osKernelGetTickCount(), component, message);
@@ -32,8 +62,23 @@ void vpx_component_log(const char *message, const char *component)
   SD_Log(log_buffer_2);
 }
 
+void vpx_component_log(const char *message, const char *component)
+{
+  if (!log_lock())
+  {
+    return;
+  }
+  component_log_locked(message, component);
+  log_unlock();
+}
+
 void vpx_log(const char *format, ...)
 {
+  if (!log_lock())
+  {
+    return;
+  }
+
   va_list format_arguments;
 
   va_start(format_arguments, format);
@@ -43,5 +88,6 @@ void vpx_log(const char *format, ...)
 
   va_end(format_arguments);
 
-  vpx_component_log(log_buffer_1, "DISP");
+  component_log_locked(log_buffer_1, "DISP");
+  log_unlock();
 }

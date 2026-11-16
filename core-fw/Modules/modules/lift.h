@@ -33,6 +33,8 @@ extern "C"
 #define LIFT_MOTOR_MAX_SPEED 100
 
 #define LIFT_LID_OPEN_POSITION -32000
+// position of the top limit switch, set by the calibration
+#define LIFT_TOP_POSITION 0
 
   extern struct axis_t lift_axis;
 

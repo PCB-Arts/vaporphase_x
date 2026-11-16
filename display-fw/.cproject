@@ -103,8 +103,6 @@
                   <listOptionValue builtIn="false" value="../TouchGFX/generated/texts/include"/>
                   <listOptionValue builtIn="false" value="../TouchGFX/generated/videos/include"/>
                   <listOptionValue builtIn="false" value="../TouchGFX/gui/include"/>
-                  <listOptionValue builtIn="false" value="../TouchGFX/vendor/gpu2d/NemaGFX/include"/>
-                  <listOptionValue builtIn="false" value="../TouchGFX/vendor/gpu2d/TouchGFXNema/include"/>
                   <listOptionValue builtIn="false" value="../Middlewares/ST/touchgfx_components/gpu2d/NemaGFX/include"/>
                   <listOptionValue builtIn="false" value="../Middlewares/ST/touchgfx_components/gpu2d/TouchGFXNema/include"/>
                 </option>
@@ -149,8 +147,6 @@
                   <listOptionValue builtIn="false" value="../TouchGFX/generated/texts/include"/>
                   <listOptionValue builtIn="false" value="../TouchGFX/generated/videos/include"/>
                   <listOptionValue builtIn="false" value="../TouchGFX/gui/include"/>
-                  <listOptionValue builtIn="false" value="../TouchGFX/vendor/gpu2d/NemaGFX/include"/>
-                  <listOptionValue builtIn="false" value="../TouchGFX/vendor/gpu2d/TouchGFXNema/include"/>
                   <listOptionValue builtIn="false" value="../Middlewares/ST/touchgfx_components/gpu2d/NemaGFX/include"/>
                   <listOptionValue builtIn="false" value="../Middlewares/ST/touchgfx_components/gpu2d/TouchGFXNema/include"/>
                 </option>
@@ -163,8 +159,6 @@
               <tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.linker.1672784153" name="MCU G++ Linker" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.linker">
                 <option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.linker.option.script.842672303" name="Linker Script (-T)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.linker.option.script" value="${workspace_loc:/${ProjName}/STM32U5A9NJHXQ_FLASH.ld}" valueType="string"/>
                 <option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.linker.option.directories.8113110968" name="Library search path (-L)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.linker.option.directories" valueType="libPaths">
-                  <listOptionValue builtIn="false" value="../TouchGFX/vendor/gpu2d/NemaGFX/lib/core/cortex_m33/gcc"/>
-                  <listOptionValue builtIn="false" value="../TouchGFX/vendor/gpu2d/TouchGFXNema/lib/cortex_m33/gcc"/>
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc:/display-fw/Middlewares/ST/touchgfx/lib/core/cortex_m33/gcc}&quot;"/>
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc:/display-fw/Middlewares/ST/touchgfx_components/gpu2d/NemaGFX/lib/core/cortex_m33/gcc}&quot;"/>
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc:/display-fw/Middlewares/ST/touchgfx_components/gpu2d/TouchGFXNema/lib/cortex_m33/gcc}&quot;"/>
@@ -190,11 +184,11 @@
             </toolChain>
           </folderInfo>
           <sourceEntries>
-            <entry excluding="simulator|generated/simulator|generated/simulator/src/mainBase.cpp|generated/simulator/src/video/SoftwareMJPEGDecoder.cpp|simulator/main.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="TouchGFX"/>
             <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="shared"/>
+            <entry excluding="ST/touchgfx|ST/touchgfx/framework/source/platform/hal/simulator/sdl2/HALSDL2.cpp|ST/touchgfx/framework/source/platform/hal/simulator/sdl2/HALSDL2_icon.cpp|ST/touchgfx/framework/source/platform/hal/simulator/sdl2/OSWrappers.cpp|ST/touchgfx/os/OSWrappers_cmsis.cpp|ST/touchgfx/os/OSWrappers.cpp|ST/touchgfx/framework/source/platform/driver/touch/SDL2TouchController.cpp|ST/touchgfx/framework/source/touchgfx/widgets|ST/touchgfx/framework/source/touchgfx/containers" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
             <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Modules"/>
             <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
-            <entry excluding="ST/touchgfx|ST/touchgfx/framework/source/platform/hal/simulator/sdl2/HALSDL2.cpp|ST/touchgfx/framework/source/platform/hal/simulator/sdl2/HALSDL2_icon.cpp|ST/touchgfx/framework/source/platform/hal/simulator/sdl2/OSWrappers.cpp|ST/touchgfx/os/OSWrappers_cmsis.cpp|ST/touchgfx/os/OSWrappers.cpp|ST/touchgfx/framework/source/platform/driver/touch/SDL2TouchController.cpp|ST/touchgfx/framework/source/touchgfx/widgets|ST/touchgfx/framework/source/touchgfx/containers" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
+            <entry excluding="simulator|generated/simulator|generated/simulator/src/mainBase.cpp|generated/simulator/src/video/SoftwareMJPEGDecoder.cpp|simulator/main.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="TouchGFX"/>
             <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
           </sourceEntries>
         </configuration>
@@ -292,8 +286,6 @@
                   <listOptionValue builtIn="false" value="../TouchGFX/generated/texts/include"/>
                   <listOptionValue builtIn="false" value="../TouchGFX/generated/videos/include"/>
                   <listOptionValue builtIn="false" value="../TouchGFX/gui/include"/>
-                  <listOptionValue builtIn="false" value="../TouchGFX/vendor/gpu2d/NemaGFX/include"/>
-                  <listOptionValue builtIn="false" value="../TouchGFX/vendor/gpu2d/TouchGFXNema/include"/>
                   <listOptionValue builtIn="false" value="../Middlewares/ST/touchgfx_components/gpu2d/NemaGFX/include"/>
                   <listOptionValue builtIn="false" value="../Middlewares/ST/touchgfx_components/gpu2d/TouchGFXNema/include"/>
                 </option>
@@ -337,8 +329,6 @@
                   <listOptionValue builtIn="false" value="../TouchGFX/generated/texts/include"/>
                   <listOptionValue builtIn="false" value="../TouchGFX/generated/videos/include"/>
                   <listOptionValue builtIn="false" value="../TouchGFX/gui/include"/>
-                  <listOptionValue builtIn="false" value="../TouchGFX/vendor/gpu2d/NemaGFX/include"/>
-                  <listOptionValue builtIn="false" value="../TouchGFX/vendor/gpu2d/TouchGFXNema/include"/>
                   <listOptionValue builtIn="false" value="../Middlewares/ST/touchgfx_components/gpu2d/NemaGFX/include"/>
                   <listOptionValue builtIn="false" value="../Middlewares/ST/touchgfx_components/gpu2d/TouchGFXNema/include"/>
                 </option>
@@ -351,8 +341,6 @@
               <tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.linker.557346492" name="MCU G++ Linker" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.linker">
                 <option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.linker.option.script.77405155" name="Linker Script (-T)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.linker.option.script" value="${workspace_loc:/${ProjName}/STM32U5A9NJHXQ_FLASH.ld}" valueType="string"/>
                 <option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.linker.option.directories.3070739578" name="Library search path (-L)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.linker.option.directories" valueType="libPaths">
-                  <listOptionValue builtIn="false" value="../TouchGFX/vendor/gpu2d/NemaGFX/lib/core/cortex_m33/gcc"/>
-                  <listOptionValue builtIn="false" value="../TouchGFX/vendor/gpu2d/TouchGFXNema/lib/cortex_m33/gcc"/>
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc:/display-fw/Middlewares/ST/touchgfx/lib/core/cortex_m33/gcc}&quot;"/>
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc:/display-fw/Middlewares/ST/touchgfx_components/gpu2d/NemaGFX/lib/core/cortex_m33/gcc}&quot;"/>
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc:/display-fw/Middlewares/ST/touchgfx_components/gpu2d/TouchGFXNema/lib/cortex_m33/gcc}&quot;"/>
@@ -378,11 +366,11 @@
             </toolChain>
           </folderInfo>
           <sourceEntries>
-            <entry excluding="simulator|generated/simulator|generated/simulator/src/mainBase.cpp|generated/simulator/src/video/SoftwareMJPEGDecoder.cpp|simulator/main.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="TouchGFX"/>
             <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="shared"/>
+            <entry excluding="ST/touchgfx|ST/touchgfx/framework/source/platform/hal/simulator/sdl2/HALSDL2.cpp|ST/touchgfx/framework/source/platform/hal/simulator/sdl2/HALSDL2_icon.cpp|ST/touchgfx/framework/source/platform/hal/simulator/sdl2/OSWrappers.cpp|ST/touchgfx/os/OSWrappers_cmsis.cpp|ST/touchgfx/os/OSWrappers.cpp|ST/touchgfx/framework/source/platform/driver/touch/SDL2TouchController.cpp|ST/touchgfx/framework/source/touchgfx/widgets|ST/touchgfx/framework/source/touchgfx/containers" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
             <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Modules"/>
             <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
-            <entry excluding="ST/touchgfx|ST/touchgfx/framework/source/platform/hal/simulator/sdl2/HALSDL2.cpp|ST/touchgfx/framework/source/platform/hal/simulator/sdl2/HALSDL2_icon.cpp|ST/touchgfx/framework/source/platform/hal/simulator/sdl2/OSWrappers.cpp|ST/touchgfx/os/OSWrappers_cmsis.cpp|ST/touchgfx/os/OSWrappers.cpp|ST/touchgfx/framework/source/platform/driver/touch/SDL2TouchController.cpp|ST/touchgfx/framework/source/touchgfx/widgets|ST/touchgfx/framework/source/touchgfx/containers" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
+            <entry excluding="simulator|generated/simulator|generated/simulator/src/mainBase.cpp|generated/simulator/src/video/SoftwareMJPEGDecoder.cpp|simulator/main.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="TouchGFX"/>
             <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
           </sourceEntries>
         </configuration>

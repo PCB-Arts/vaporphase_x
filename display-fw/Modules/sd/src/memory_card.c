@@ -16,58 +16,97 @@
  */
 
 #include "memory_card.h"
+#include "log.h"
 #include "main.h"
-
-#include "stdio.h"
+#include "sdmmc.h"
 
 #include <string.h>
 
-extern SD_HandleTypeDef hsd1;
-
 FATFS SDFatFs; /* File system object for SD card logical drive */
 FIL g_logfile; /* File object */
-FIL testfile1;
-FIL testfile2;
 FIL g_selftestLogfile;
 char SDPath[4]; /* SD card logical drive path */
 
-static int sd_open_logfile(void);
+static FRESULT sd_open_logfile(void);
 static int sd_close_logfile(void);
+
+/* Initialize the card from scratch, so a card inserted after boot or swapped
+ * after an eject works. main() doesn't call MX_SDMMC1_SD_Init() (disabled in
+ * CubeMX); its USER CODE turns a failed init into sdmmc1_init_failed instead
+ * of Error_Handler(), which would hang without a card. */
+static int sd_card_init(void)
+{
+  if (hsd1.State != HAL_SD_STATE_RESET)
+  {
+    HAL_SD_DeInit(&hsd1);
+  }
+
+  /* HAL_SD_DeInit() only stops the clock. Reset the peripheral, so nothing of
+   * a failed transfer is left for the new init. */
+  __HAL_RCC_SDMMC1_FORCE_RESET();
+  __HAL_RCC_SDMMC1_RELEASE_RESET();
+
+  MX_SDMMC1_SD_Init();
+  return sdmmc1_init_failed ? -1 : 0;
+}
 
 int sd_mount(void)
 {
+  /* The log shows which step failed. The lines are written to the card with
+   * the next successful mount. */
+  if (sd_card_init() != 0)
+  {
+    vpx_log("SD mount failed: card init (HAL error 0x%x)",
+            (unsigned int)hsd1.ErrorCode);
+    return -1;
+  }
+
   /* Register the file system object to the FatFs module */
   FRESULT result = f_mount(&SDFatFs, (TCHAR const *)SDPath, 1);
   if (result != FR_OK)
   {
-    /* FatFs Initialization Error */
+    vpx_log("SD mount failed: file system (FatFs result %d)", (int)result);
     return -1;
   }
 
-  return sd_open_logfile();
+  result = sd_open_logfile();
+  if (result != FR_OK)
+  {
+    vpx_log("SD mount failed: log file (FatFs result %d)", (int)result);
+    return -1;
+  }
+
+  return 0;
 }
 
 int sd_unmount(void)
 {
   sd_close_logfile();
-  // HAL_SD_DeInit(&hsd1);                    // HAL deinit
   f_mount(NULL, "", 0);
+  HAL_SD_DeInit(&hsd1);
   return 0;
 }
 
-int sd_open_logfile()
+FRESULT sd_card_check(void)
 {
+  /* f_opendir() checks the card (disk_status(), CMD13) under the FatFs volume
+   * lock, so the check can't interfere with a transfer of another task. */
+  DIR dir;
+  const FRESULT result = f_opendir(&dir, "/");
+  if (result == FR_OK)
+  {
+    f_closedir(&dir);
+  }
 
-  //	FRESULT testresult = f_open(&g_logfile, "0:/testfile.txt", FA_WRITE |
-  // FA_OPEN_APPEND); 	printf("f_open result is: %d\n", testresult); 	if
-  //(testresult != FR_OK) 		return -1; 	return 0;
+  /* FR_TIMEOUT is fine: the volume lock wasn't free in time, because another
+   * task is busy with the card. That says nothing about the card, the next
+   * check tells. */
+  return result == FR_TIMEOUT ? FR_OK : result;
+}
 
-  FRESULT result =
-      f_open(&g_logfile, LOGFILE_FILENAME, FA_WRITE | FA_OPEN_APPEND);
-  printf("f_open result is: %d\n", result);
-  if (result != FR_OK)
-    return -1;
-  return 0;
+static FRESULT sd_open_logfile(void)
+{
+  return f_open(&g_logfile, LOGFILE_FILENAME, FA_WRITE | FA_OPEN_APPEND);
 }
 
 int sd_close_logfile()

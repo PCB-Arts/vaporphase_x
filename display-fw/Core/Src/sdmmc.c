@@ -21,7 +21,8 @@
 #include "sdmmc.h"
 
 /* USER CODE BEGIN 0 */
-
+/* Set instead of calling Error_Handler() in MX_SDMMC1_SD_Init(), see there */
+volatile uint8_t sdmmc1_init_failed;
 /* USER CODE END 0 */
 
 SD_HandleTypeDef hsd1;
@@ -36,7 +37,10 @@ void MX_SDMMC1_SD_Init(void)
   /* USER CODE END SDMMC1_Init 0 */
 
   /* USER CODE BEGIN SDMMC1_Init 1 */
-
+  /* Called by sd_card_init() (not by main()): a missing card must not end in
+   * Error_Handler(), so only record the failure */
+  sdmmc1_init_failed = 0;
+#define Error_Handler() (sdmmc1_init_failed = 1)
   /* USER CODE END SDMMC1_Init 1 */
   hsd1.Instance = SDMMC1;
   hsd1.Init.ClockEdge = SDMMC_CLOCK_EDGE_FALLING;
@@ -49,7 +53,7 @@ void MX_SDMMC1_SD_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN SDMMC1_Init 2 */
-
+#undef Error_Handler
   /* USER CODE END SDMMC1_Init 2 */
 
 }

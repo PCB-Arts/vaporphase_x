@@ -347,7 +347,7 @@ menuViewBase::menuViewBase() :
 
     menu_container.add(options_general);
 
-    menu_container.setSelectedPage(0);
+    menu_container.setSelectedPage(2);
     add(menu_container);
 
     modalWindowDecision.setBackground(touchgfx::BitmapId(BITMAP_MODAL_BG_ID), 160, 104);

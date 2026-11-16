@@ -27,6 +27,8 @@ extern "C"
 
   void SD_Log_Init(void);
   void SD_Log_Worker(void);
+  // closes Selftest.log if open, call before unmounting
+  void SD_Log_OnUnmount(void);
 
 #ifdef __cplusplus
 }

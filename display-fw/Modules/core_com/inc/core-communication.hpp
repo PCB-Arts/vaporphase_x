@@ -44,6 +44,8 @@ extern "C"
 
   void CoreCom_OpenLid();
   void CoreCom_CloseLid();
+  // lift to the top, then open the lid; the core checks the conditions
+  void CoreCom_ServicePosition();
 
   void CoreCom_SetLidMode(LidOpenMode mode);
 

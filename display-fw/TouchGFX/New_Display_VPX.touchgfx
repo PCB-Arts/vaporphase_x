@@ -80,7 +80,7 @@
             "IndicatorImageNormal": "punkt_grau_737373_10x10_padding2.png",
             "IndicatorImageHighlight": "punkt_blau_10x10_padding2.png",
             "EndSwipeElasticWidth": 50,
-            "SelectedPage": "start_stop",
+            "SelectedPage": "options_sd",
             "Components": [
               {
                 "Type": "Container",

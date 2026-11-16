@@ -26,6 +26,7 @@ extern "C"
 #include "diskio.h"
 #include "ff.h"
 #include "main.h"
+#include <stdbool.h>
 
 #define LOGFILE_FILENAME "VaporPhaseX.log"
 #define SELFTEST_LOGFILE_FILENAME "Selftest.log"
@@ -34,6 +35,10 @@ extern "C"
 
   int sd_mount(void);
   int sd_unmount(void);
+
+  /* Checks if the mounted card still answers. FR_OK if it does, else the
+   * FatFs result (card removed without eject or not readable any more). */
+  FRESULT sd_card_check(void);
 
   int sd_open_selftest_logfile();
   int sd_close_selftest_logfile();
