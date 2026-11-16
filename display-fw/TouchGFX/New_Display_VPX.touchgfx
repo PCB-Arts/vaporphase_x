@@ -58,8 +58,7 @@
       },
       {
         "Name": "menu",
-        "OverrideDefaultBufferSize": true,
-        "CanvasBufferSize": 54000,
+        "CanvasBufferSize": 12000,
         "Components": [
           {
             "Type": "Image",
@@ -75,13 +74,13 @@
             "Height": 480,
             "SwipeCutoff": 50,
             "ShowPageIndicator": true,
-            "PageIndicatorX": 376,
+            "PageIndicatorX": 380,
             "PageIndicatorY": 10,
             "CenteredX": true,
-            "IndicatorImageNormal": "__generated\\light_theme_images_widgets_swipecontainer_small_off_normal.png",
-            "IndicatorImageHighlight": "__generated\\light_theme_images_widgets_swipecontainer_small_on_normal.png",
+            "IndicatorImageNormal": "punkt_grau_737373_10x10_padding2.png",
+            "IndicatorImageHighlight": "punkt_blau_10x10_padding2.png",
             "EndSwipeElasticWidth": 50,
-            "SelectedPage": "options_general",
+            "SelectedPage": "start_stop",
             "Components": [
               {
                 "Type": "Container",
@@ -92,8 +91,8 @@
                   {
                     "Type": "FlexButton",
                     "Name": "close_lid",
-                    "X": 168,
-                    "Y": 281,
+                    "X": 165,
+                    "Y": 294,
                     "Width": 468,
                     "Height": 91,
                     "ButtonTrigger": {
@@ -102,26 +101,27 @@
                     "ButtonStyles": [
                       {
                         "Type": "ImageButtonStyle",
-                        "ImageReleased": "close-lid.png",
-                        "ImagePressed": "close-lid-push.png"
+                        "ImageReleased": "close_lid_button_468x91.png",
+                        "ImagePressed": "close_lid_button_pressed_468x91.png"
                       }
                     ]
                   },
                   {
                     "Type": "FlexButton",
                     "Name": "open_lid",
-                    "X": 168,
-                    "Y": 281,
+                    "X": 165,
+                    "Y": 294,
                     "Width": 468,
                     "Height": 91,
+                    "Visible": false,
                     "ButtonTrigger": {
                       "Type": "TouchButtonTrigger"
                     },
                     "ButtonStyles": [
                       {
                         "Type": "ImageButtonStyle",
-                        "ImageReleased": "open-lid.png",
-                        "ImagePressed": "open-lid-push.png"
+                        "ImageReleased": "open_lid_button_468x91.png",
+                        "ImagePressed": "close_lid_button_pressed_468x91.png"
                       }
                     ]
                   },
@@ -154,8 +154,8 @@
                     "ButtonStyles": [
                       {
                         "Type": "ImageButtonStyle",
-                        "ImageReleased": "stop-reflow.png",
-                        "ImagePressed": "stop-reflow-push.png"
+                        "ImageReleased": "stop_reflow_button_468x91.png",
+                        "ImagePressed": "stop_reflow_button_pressed_468x91.png"
                       }
                     ]
                   },
@@ -166,14 +166,15 @@
                     "Y": 190,
                     "Width": 468,
                     "Height": 91,
+                    "Visible": false,
                     "ButtonTrigger": {
                       "Type": "TouchButtonTrigger"
                     },
                     "ButtonStyles": [
                       {
                         "Type": "ImageButtonStyle",
-                        "ImageReleased": "start-reflow.png",
-                        "ImagePressed": "start-reflow-push.png"
+                        "ImageReleased": "start_reflow_button_468x91.png",
+                        "ImagePressed": "start_reflow_button_pressed_468x91.png"
                       }
                     ]
                   }
@@ -264,9 +265,9 @@
                     "XAxisGrid": {
                       "Type": "GraphGrid",
                       "Color": {
-                        "Red": 102,
-                        "Green": 102,
-                        "Blue": 102
+                        "Red": 255,
+                        "Green": 255,
+                        "Blue": 255
                       },
                       "Interval": 60.0,
                       "LineWidth": 1
@@ -274,9 +275,9 @@
                     "YAxisGrid": {
                       "Type": "GraphGrid",
                       "Color": {
-                        "Red": 102,
-                        "Green": 102,
-                        "Blue": 102
+                        "Red": 255,
+                        "Green": 255,
+                        "Blue": 255
                       },
                       "Interval": 25.0,
                       "LineWidth": 1
@@ -286,9 +287,9 @@
                       "Interval": 60.0,
                       "DecimalSeparator": "Point",
                       "TextColor": {
-                        "Red": 102,
-                        "Green": 102,
-                        "Blue": 102
+                        "Red": 255,
+                        "Green": 255,
+                        "Blue": 255
                       },
                       "TextId": "__SingleUse_67IK",
                       "TextRotation": "0",
@@ -299,9 +300,9 @@
                       "Interval": 30.0,
                       "DecimalSeparator": "Point",
                       "TextColor": {
-                        "Red": 102,
-                        "Green": 102,
-                        "Blue": 102
+                        "Red": 255,
+                        "Green": 255,
+                        "Blue": 255
                       },
                       "TextId": "__SingleUse_JNOU",
                       "TextRotation": "0",
@@ -312,7 +313,7 @@
                     "Type": "TextArea",
                     "Name": "cooling_temp_text",
                     "X": 75,
-                    "Y": 33,
+                    "Y": 38,
                     "Width": 74,
                     "Height": 19,
                     "TextId": "__SingleUse_XQY0",
@@ -335,8 +336,8 @@
                   {
                     "Type": "TextArea",
                     "Name": "pcb_temp_text",
-                    "X": 275,
-                    "Y": 33,
+                    "X": 276,
+                    "Y": 38,
                     "Width": 52,
                     "Height": 19,
                     "TextId": "__SingleUse_P9LG",
@@ -359,8 +360,8 @@
                   {
                     "Type": "TextArea",
                     "Name": "galden_temp_text",
-                    "X": 475,
-                    "Y": 33,
+                    "X": 478,
+                    "Y": 38,
                     "Width": 70,
                     "Height": 19,
                     "TextId": "__SingleUse_QQQH",
@@ -383,8 +384,8 @@
                   {
                     "Type": "TextArea",
                     "Name": "state_text",
-                    "X": 675,
-                    "Y": 33,
+                    "X": 672,
+                    "Y": 38,
                     "Width": 73,
                     "Height": 19,
                     "TextId": "__SingleUse_H126",
@@ -404,43 +405,59 @@
                   {
                     "Type": "Image",
                     "Name": "pictogramm_state",
-                    "X": 625,
-                    "Y": 25,
+                    "X": 627,
+                    "Y": 29,
                     "Width": 36,
                     "Height": 36,
-                    "RelativeFilename": "InfoV2.png"
+                    "RelativeFilename": "maschinenstatus_info_36_v3.png"
                   },
                   {
                     "Type": "Image",
                     "Name": "pictogramm_galden",
-                    "X": 425,
-                    "Y": 25,
+                    "X": 424,
+                    "Y": 29,
                     "Width": 36,
                     "Height": 36,
-                    "RelativeFilename": "drop.png"
+                    "RelativeFilename": "galden_temperatur_36_v3.png"
                   },
                   {
                     "Type": "Image",
                     "Name": "pictogramm_pcb",
                     "X": 225,
-                    "Y": 25,
-                    "Width": 38,
-                    "Height": 38,
-                    "RelativeFilename": "pcb.png"
+                    "Y": 29,
+                    "Width": 36,
+                    "Height": 36,
+                    "RelativeFilename": "pcb_symbol_36x36_weiss.png"
                   },
                   {
                     "Type": "TextArea",
                     "Name": "label_time_in_seconds",
                     "X": 335,
                     "Y": 446,
-                    "Width": 106,
+                    "Width": 99,
                     "Height": 17,
                     "TextId": "__SingleUse_TIUU",
                     "TextRotation": "0",
                     "Color": {
-                      "Red": 102,
-                      "Green": 102,
-                      "Blue": 102
+                      "Red": 255,
+                      "Green": 255,
+                      "Blue": 255
+                    },
+                    "AutoSize": true
+                  },
+                  {
+                    "Type": "TextArea",
+                    "Name": "label_time_in_seconds_1",
+                    "X": 16,
+                    "Y": 208,
+                    "Width": 17,
+                    "Height": 90,
+                    "TextId": "__SingleUse_7AQU",
+                    "TextRotation": "270",
+                    "Color": {
+                      "Red": 255,
+                      "Green": 255,
+                      "Blue": 255
                     },
                     "AutoSize": true
                   },
@@ -448,15 +465,15 @@
                     "Type": "TextArea",
                     "Name": "label_degree",
                     "X": 16,
-                    "Y": 257,
-                    "Width": 16,
-                    "Height": 17,
+                    "Y": 188,
+                    "Width": 17,
+                    "Height": 16,
                     "TextId": "__SingleUse_IJ5R",
-                    "TextRotation": "0",
+                    "TextRotation": "270",
                     "Color": {
-                      "Red": 102,
-                      "Green": 102,
-                      "Blue": 102
+                      "Red": 255,
+                      "Green": 255,
+                      "Blue": 255
                     },
                     "AutoSize": true,
                     "Wildcard1": {
@@ -499,15 +516,13 @@
                   {
                     "Type": "TextureMapper",
                     "Name": "rotatingCoolingSign",
-                    "X": 25,
-                    "Y": 25,
+                    "X": 24,
+                    "Y": 29,
                     "Width": 36,
                     "Height": 36,
                     "UseAnimation": true,
                     "RenderingAlgorithm": "Nearest-neighbor",
-                    "FileNameImage": "arrow1.png",
-                    "LockBitmapToCenter": true,
-                    "ZAngle": 1.0,
+                    "FileNameImage": "pcb_symbol_36x36_weiss_luefter_minimal.png",
                     "Scale": 1.0,
                     "LockOrigoToCenter": true,
                     "XOrigo": 18.0,
@@ -526,9 +541,9 @@
                   {
                     "Type": "TextArea",
                     "Name": "options_sd_card_label",
-                    "X": 48,
-                    "Y": 65,
-                    "Width": 72,
+                    "X": 46,
+                    "Y": 228,
+                    "Width": 76,
                     "Height": 25,
                     "TextId": "__SingleUse_TT7P",
                     "TextRotation": "0",
@@ -542,9 +557,9 @@
                   {
                     "Type": "TextArea",
                     "Name": "options_sd_card_export_label",
-                    "X": 48,
-                    "Y": 134,
-                    "Width": 184,
+                    "X": 46,
+                    "Y": 146,
+                    "Width": 156,
                     "Height": 25,
                     "TextId": "__SingleUse_369K",
                     "TextRotation": "0",
@@ -559,8 +574,8 @@
                     "Type": "TextArea",
                     "Name": "options_solder_profile_label",
                     "X": 48,
-                    "Y": 257,
-                    "Width": 117,
+                    "Y": 274,
+                    "Width": 119,
                     "Height": 25,
                     "TextId": "__SingleUse_FCSJ",
                     "TextRotation": "0",
@@ -574,8 +589,8 @@
                   {
                     "Type": "FlexButton",
                     "Name": "options_sd_card_button_mount",
-                    "X": 585,
-                    "Y": 47,
+                    "X": 587,
+                    "Y": 205,
                     "Width": 170,
                     "Height": 60,
                     "Visible": false,
@@ -585,16 +600,16 @@
                     "ButtonStyles": [
                       {
                         "Type": "ImageButtonStyle",
-                        "ImageReleased": "button-mount-medium.png",
-                        "ImagePressed": "button-mount-push-medium.png"
+                        "ImageReleased": "button_mount_170x60.png",
+                        "ImagePressed": "button_mount_737373_170x60.png"
                       }
                     ]
                   },
                   {
                     "Type": "FlexButton",
                     "Name": "options_sd_card_button_eject",
-                    "X": 587,
-                    "Y": 47,
+                    "X": 585,
+                    "Y": 210,
                     "Width": 170,
                     "Height": 60,
                     "ButtonTrigger": {
@@ -603,16 +618,16 @@
                     "ButtonStyles": [
                       {
                         "Type": "ImageButtonStyle",
-                        "ImageReleased": "button-eject.png",
-                        "ImagePressed": "button-eject-push.png"
+                        "ImageReleased": "button_eject_170x60.png",
+                        "ImagePressed": "button_eject_737373_170x60.png"
                       }
                     ]
                   },
                   {
                     "Type": "FlexButton",
                     "Name": "options_sd_card_button_export",
-                    "X": 587,
-                    "Y": 116,
+                    "X": 585,
+                    "Y": 128,
                     "Width": 170,
                     "Height": 60,
                     "ButtonTrigger": {
@@ -621,17 +636,17 @@
                     "ButtonStyles": [
                       {
                         "Type": "ImageButtonStyle",
-                        "ImageReleased": "button-eject.png",
-                        "ImagePressed": "button-eject-push.png"
+                        "ImageReleased": "button_active_170x60.png",
+                        "ImagePressed": "button_inactive_737373_170x60.png"
                       }
                     ]
                   },
                   {
                     "Type": "FlexButton",
                     "Name": "options_button_profile_set",
-                    "X": 637,
-                    "Y": 353,
-                    "Width": 120,
+                    "X": 587,
+                    "Y": 355,
+                    "Width": 170,
                     "Height": 60,
                     "ButtonTrigger": {
                       "Type": "TouchButtonTrigger"
@@ -639,15 +654,15 @@
                     "ButtonStyles": [
                       {
                         "Type": "ImageButtonStyle",
-                        "ImageReleased": "button-set.png",
-                        "ImagePressed": "button-set-push.png"
+                        "ImageReleased": "button_set_170x60.png",
+                        "ImagePressed": "button_set_737373_170x60.png"
                       }
                     ]
                   },
                   {
                     "Type": "ScrollWheel",
                     "Name": "options_solder_profile_wheel",
-                    "X": 85,
+                    "X": 46,
                     "Y": 313,
                     "Width": 500,
                     "Height": 150,
@@ -677,21 +692,13 @@
                     "Radius": 5.0,
                     "EndAngle": 360.0,
                     "CapPrecision": "Butt"
-                  }
-                ]
-              },
-              {
-                "Type": "Container",
-                "Name": "options_general",
-                "Width": 800,
-                "Height": 480,
-                "Components": [
+                  },
                   {
                     "Type": "TextArea",
-                    "Name": "options_temp_unit_label",
-                    "X": 48,
-                    "Y": 65,
-                    "Width": 127,
+                    "Name": "options_temp_open",
+                    "X": 46,
+                    "Y": 62,
+                    "Width": 168,
                     "Height": 25,
                     "TextId": "__SingleUse_3O9T",
                     "TextRotation": "0",
@@ -703,11 +710,73 @@
                     "AutoSize": true
                   },
                   {
+                    "Type": "FlexButton",
+                    "Name": "options_openlid_tem_button_eco",
+                    "X": 358,
+                    "Y": 47,
+                    "Width": 120,
+                    "Height": 60,
+                    "ButtonTrigger": {
+                      "Type": "TouchButtonTrigger"
+                    },
+                    "ButtonStyles": [
+                      {
+                        "Type": "ImageButtonStyle",
+                        "ImageReleased": "button_eco_737373_120x60.png",
+                        "ImagePressed": "button_eco_120x60.png"
+                      }
+                    ]
+                  },
+                  {
+                    "Type": "FlexButton",
+                    "Name": "options_openlid_tem_button_standard",
+                    "X": 497,
+                    "Y": 47,
+                    "Width": 120,
+                    "Height": 60,
+                    "ButtonTrigger": {
+                      "Type": "TouchButtonTrigger"
+                    },
+                    "ButtonStyles": [
+                      {
+                        "Type": "ImageButtonStyle",
+                        "ImageReleased": "button_standard_120x60.png",
+                        "ImagePressed": "button_standard_737373_120x60.png"
+                      }
+                    ]
+                  },
+                  {
+                    "Type": "FlexButton",
+                    "Name": "options_openlid_tem_button_fast",
+                    "X": 635,
+                    "Y": 47,
+                    "Width": 120,
+                    "Height": 60,
+                    "ButtonTrigger": {
+                      "Type": "TouchButtonTrigger"
+                    },
+                    "ButtonStyles": [
+                      {
+                        "Type": "ImageButtonStyle",
+                        "ImageReleased": "button_fast_737373_120x60.png",
+                        "ImagePressed": "button_fast_120x60.png"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "Type": "Container",
+                "Name": "options_general",
+                "Width": 800,
+                "Height": 480,
+                "Components": [
+                  {
                     "Type": "TextArea",
-                    "Name": "options_lid_temp_label",
-                    "X": 48,
-                    "Y": 146,
-                    "Width": 164,
+                    "Name": "options_temperature_unit_label",
+                    "X": 41,
+                    "Y": 62,
+                    "Width": 154,
                     "Height": 25,
                     "TextId": "__SingleUse_W2EE",
                     "TextRotation": "0",
@@ -721,9 +790,9 @@
                   {
                     "Type": "TextArea",
                     "Name": "options_lid_service_label",
-                    "X": 48,
-                    "Y": 223,
-                    "Width": 140,
+                    "X": 42,
+                    "Y": 146,
+                    "Width": 142,
                     "Height": 25,
                     "TextId": "__SingleUse_CAMV",
                     "TextRotation": "0",
@@ -735,74 +804,20 @@
                     "AutoSize": true
                   },
                   {
-                    "Type": "FlexButton",
-                    "Name": "options_openlid_tem_button_eco",
-                    "X": 358,
-                    "Y": 132,
-                    "Width": 120,
-                    "Height": 60,
-                    "ButtonTrigger": {
-                      "Type": "TouchButtonTrigger"
-                    },
-                    "ButtonStyles": [
-                      {
-                        "Type": "ImageButtonStyle",
-                        "ImageReleased": "button-eco.png",
-                        "ImagePressed": "button-eco-pushed_green.png"
-                      }
-                    ]
-                  },
-                  {
-                    "Type": "FlexButton",
-                    "Name": "options_openlid_tem_button_standard",
-                    "X": 501,
-                    "Y": 132,
-                    "Width": 120,
-                    "Height": 60,
-                    "ButtonTrigger": {
-                      "Type": "TouchButtonTrigger"
-                    },
-                    "ButtonStyles": [
-                      {
-                        "Type": "ImageButtonStyle",
-                        "ImageReleased": "button-standard.png",
-                        "ImagePressed": "button-standard-pushed_green.png"
-                      }
-                    ]
-                  },
-                  {
-                    "Type": "FlexButton",
-                    "Name": "options_openlid_tem_button_fast",
-                    "X": 633,
-                    "Y": 132,
-                    "Width": 120,
-                    "Height": 60,
-                    "ButtonTrigger": {
-                      "Type": "TouchButtonTrigger"
-                    },
-                    "ButtonStyles": [
-                      {
-                        "Type": "ImageButtonStyle",
-                        "ImageReleased": "button-fast.png",
-                        "ImagePressed": "button-fast-pushed_green.png"
-                      }
-                    ]
-                  },
-                  {
                     "Type": "ToggleButton",
                     "Name": "options_temp_toggle_button",
                     "X": 587,
                     "Y": 47,
                     "Width": 170,
                     "Height": 60,
-                    "Pressed": "switch-fahrenheit-medium.png",
-                    "Released": "switch-celsius-medium.png"
+                    "Pressed": "toggle_fahrenheit_170x60.png",
+                    "Released": "toggle_celsius_170x60.png"
                   },
                   {
                     "Type": "FlexButton",
                     "Name": "options_lid_service_button",
                     "X": 585,
-                    "Y": 205,
+                    "Y": 130,
                     "Width": 170,
                     "Height": 60,
                     "ButtonTrigger": {
@@ -811,8 +826,8 @@
                     "ButtonStyles": [
                       {
                         "Type": "ImageButtonStyle",
-                        "ImageReleased": "button-eject.png",
-                        "ImagePressed": "button-eject-push.png"
+                        "ImageReleased": "button_set_170x60.png",
+                        "ImagePressed": "button_set_737373_170x60.png"
                       }
                     ]
                   }
@@ -849,7 +864,7 @@
                 "X": 22,
                 "Y": 46,
                 "Width": 439,
-                "Height": 163,
+                "Height": 90,
                 "TextId": "__SingleUse_53ZW",
                 "TextRotation": "0",
                 "WideTextAction": 1
@@ -857,36 +872,36 @@
               {
                 "Type": "FlexButton",
                 "Name": "modalWindowDecisionNo",
-                "X": 31,
-                "Y": 218,
-                "Width": 185,
-                "Height": 50,
+                "X": 427,
+                "Y": 9,
+                "Width": 45,
+                "Height": 45,
                 "ButtonTrigger": {
                   "Type": "TouchButtonTrigger"
                 },
                 "ButtonStyles": [
                   {
                     "Type": "ImageButtonStyle",
-                    "ImageReleased": "button-no.png",
-                    "ImagePressed": "button-no-pushed.png"
+                    "ImageReleased": "button_x_737373_45x45.png",
+                    "ImagePressed": "button_x_737373_45x45.png"
                   }
                 ]
               },
               {
                 "Type": "FlexButton",
                 "Name": "modalWindowDecisionYes",
-                "X": 276,
-                "Y": 218,
-                "Width": 185,
-                "Height": 50,
+                "X": 155,
+                "Y": 213,
+                "Width": 170,
+                "Height": 45,
                 "ButtonTrigger": {
                   "Type": "TouchButtonTrigger"
                 },
                 "ButtonStyles": [
                   {
                     "Type": "ImageButtonStyle",
-                    "ImageReleased": "button-yes.png",
-                    "ImagePressed": "button-yes-pushed.png"
+                    "ImageReleased": "button_ok_170x45.png",
+                    "ImagePressed": "button_ok_170x45.png"
                   }
                 ]
               }
@@ -929,18 +944,18 @@
               {
                 "Type": "FlexButton",
                 "Name": "modalWindowInformationClose",
-                "X": 150,
-                "Y": 218,
-                "Width": 185,
-                "Height": 50,
+                "X": 154,
+                "Y": 213,
+                "Width": 170,
+                "Height": 45,
                 "ButtonTrigger": {
                   "Type": "TouchButtonTrigger"
                 },
                 "ButtonStyles": [
                   {
                     "Type": "ImageButtonStyle",
-                    "ImageReleased": "close-sm.png",
-                    "ImagePressed": "close-sm-push.png"
+                    "ImageReleased": "button_ok_170x45.png",
+                    "ImagePressed": "button_ok_737373_170x45.png"
                   }
                 ]
               }

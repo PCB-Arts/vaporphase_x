@@ -48,9 +48,9 @@ void menuView::restoreOpenTemperature(){
 		vpx_log("Open temperature mode: Eco");
 		CoreCom_SetLidMode(VPX_ECO);
 
-		options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_PUSHED_ID));
-		options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_PUSHED_ID));
-		options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_PUSHED_GREEN_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_PUSHED_ID));
+		options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_737373_120X60_ID));
+		options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_737373_120X60_ID));
+		options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_120X60_ID));
 
 		options_openlid_tem_button_fast.invalidate();
 		options_openlid_tem_button_standard.invalidate();
@@ -60,9 +60,9 @@ void menuView::restoreOpenTemperature(){
 		vpx_log("Open temperature mode: Standard");
 		CoreCom_SetLidMode(VPX_STANDARD);
 
-		options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_PUSHED_ID));
-		options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_PUSHED_GREEN_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_PUSHED_ID));
-		options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_PUSHED_ID));
+		options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_737373_120X60_ID));
+		options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_120X60_ID));
+		options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_737373_120X60_ID));
 
 		options_openlid_tem_button_fast.invalidate();
 		options_openlid_tem_button_standard.invalidate();
@@ -72,9 +72,9 @@ void menuView::restoreOpenTemperature(){
 		vpx_log("Open temperature mode: Fast");
 		CoreCom_SetLidMode(VPX_FAST);
 
-		options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_PUSHED_GREEN_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_PUSHED_ID));
-		options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_PUSHED_ID));
-		options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_PUSHED_ID));
+		options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_120X60_ID));
+		options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_737373_120X60_ID));
+		options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_737373_120X60_ID));
 
 		options_openlid_tem_button_fast.invalidate();
 		options_openlid_tem_button_standard.invalidate();
@@ -397,28 +397,30 @@ void menuView::updateButtonStates() {
 	Vpx_CoreStateTypeDef coreState = CoreCom_CoreState();
 
 	updateVisibility(&start_reflow, !coreState.reflow_active);
+
 	updateEnabledBitmapsOnly(&start_reflow, coreState.can_start_reflow && isProfileSelected,
-			touchgfx::Bitmap(BITMAP_START_REFLOW_ID), touchgfx::Bitmap(BITMAP_START_REFLOW_PUSH_ID),
-						touchgfx::Bitmap(BITMAP_START_REFLOW_DIABLED_ID),
+			touchgfx::Bitmap(BITMAP_START_REFLOW_BUTTON_468X91_ID), touchgfx::Bitmap(BITMAP_START_REFLOW_BUTTON_PRESSED_468X91_ID),
+						touchgfx::Bitmap(BITMAP_START_REFLOW_BUTTON_PRESSED_468X91_ID),
 						&startReflowEnabled);
 
 	updateEnabled(&stop_reflow, coreState.can_stop_reflow,
-			touchgfx::Bitmap(BITMAP_STOP_REFLOW_ID), touchgfx::Bitmap(BITMAP_STOP_REFLOW_PUSH_ID),
-									touchgfx::Bitmap(BITMAP_STOP_REFLOW_DISABLED_ID));
+			touchgfx::Bitmap(BITMAP_STOP_REFLOW_BUTTON_468X91_ID), touchgfx::Bitmap(BITMAP_STOP_REFLOW_BUTTON_PRESSED_468X91_ID),
+									touchgfx::Bitmap(BITMAP_STOP_REFLOW_BUTTON_PRESSED_468X91_ID));
 
 	updateVisibility(&open_lid, coreState.lid_state != LID_STATE_OPEN && coreState.lid_state != LID_STATE_CLOSING);
+
 	updateEnabledBitmapsOnly(&open_lid, coreState.can_open_lid && coreState.lid_state == LID_STATE_CLOSED,
-			touchgfx::Bitmap(BITMAP_OPEN_LID_ID), touchgfx::Bitmap(BITMAP_OPEN_LID_PUSH_ID),
-			touchgfx::Bitmap(BITMAP_OPEN_LID_DISABLED_ID),
+			touchgfx::Bitmap(BITMAP_OPEN_LID_BUTTON_468X91_ID), touchgfx::Bitmap(BITMAP_OPEN_LID_BUTTON_468X91_ID),
+			touchgfx::Bitmap(BITMAP_OPEN_LID_BUTTON_PRESSED_468X91_ID),
 			&openLidEnabled);
 
 	updateEnabled(&close_lid, coreState.lid_state == LID_STATE_OPEN,
-			touchgfx::Bitmap(BITMAP_CLOSE_LID_ID), touchgfx::Bitmap(BITMAP_CLOSE_LID_PUSH_ID),
-			touchgfx::Bitmap(BITMAP_CLOSE_LID_DISABLED_ID));
+			touchgfx::Bitmap(BITMAP_OPEN_LID_BUTTON_468X91_ID), touchgfx::Bitmap(BITMAP_OPEN_LID_BUTTON_468X91_ID),
+			touchgfx::Bitmap(BITMAP_OPEN_LID_BUTTON_PRESSED_468X91_ID));
 
 	updateEnabled(&options_button_profile_set, !coreState.reflow_active,
-			touchgfx::Bitmap(BITMAP_BUTTON_SET_ID), touchgfx::Bitmap(BITMAP_BUTTON_SET_PUSH_ID),
-			touchgfx::Bitmap(BITMAP_BUTTON_SET_DISABLE_ID));
+			touchgfx::Bitmap(BITMAP_BUTTON_SET_170X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_SET_737373_170X60_ID),
+			touchgfx::Bitmap(BITMAP_BUTTON_SET_737373_170X60_ID));
 
 	updateVisibility(&options_sd_card_button_eject, SD_Mounted());
 	updateVisibility(&options_sd_card_button_mount, !SD_Mounted());
@@ -485,9 +487,9 @@ void menuView::options_openlid_tem_button_eco_onClick(){
 	vpx_log("Open temperature mode: Eco");
 	CoreCom_SetLidMode(VPX_ECO);
 
-	options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_PUSHED_ID));
-	options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_PUSHED_ID));
-	options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_PUSHED_GREEN_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_PUSHED_ID));
+	options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_737373_120X60_ID));
+	options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_737373_120X60_ID));
+	options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_120X60_ID));
 
 	options_openlid_tem_button_fast.invalidate();
 	options_openlid_tem_button_standard.invalidate();
@@ -501,9 +503,9 @@ void menuView::options_openlid_tem_button_standard_onClick(){
 	vpx_log("Open temperature mode: Standard");
 	CoreCom_SetLidMode(VPX_STANDARD);
 
-	options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_PUSHED_ID));
-	options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_PUSHED_GREEN_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_PUSHED_ID));
-	options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_PUSHED_ID));
+	options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_737373_120X60_ID));
+	options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_120X60_ID));
+	options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_737373_120X60_ID));
 
 	options_openlid_tem_button_fast.invalidate();
 	options_openlid_tem_button_standard.invalidate();
@@ -517,9 +519,9 @@ void menuView::options_openlid_tem_button_fast_onClick(){
 	vpx_log("Open temperature mode: Fast");
 	CoreCom_SetLidMode(VPX_FAST);
 
-	options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_PUSHED_GREEN_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_PUSHED_ID));
-	options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_PUSHED_ID));
-	options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_PUSHED_ID));
+	options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_120X60_ID));
+	options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_737373_120X60_ID));
+	options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_737373_120X60_ID));
 
 	options_openlid_tem_button_fast.invalidate();
 	options_openlid_tem_button_standard.invalidate();
