@@ -405,8 +405,8 @@ void menuView::updateButtonStates() {
 			&openLidEnabled);
 
 	updateEnabled(&close_lid, coreState.lid_state == LID_STATE_OPEN,
-			touchgfx::Bitmap(BITMAP_OPEN_LID_BUTTON_468X91_ID), touchgfx::Bitmap(BITMAP_OPEN_LID_BUTTON_468X91_ID),
-			touchgfx::Bitmap(BITMAP_OPEN_LID_BUTTON_PRESSED_468X91_ID));
+			touchgfx::Bitmap(BITMAP_CLOSE_LID_BUTTON_468X91_ID), touchgfx::Bitmap(BITMAP_CLOSE_LID_BUTTON_PRESSED_468X91_ID),
+			touchgfx::Bitmap(BITMAP_CLOSE_LID_BUTTON_PRESSED_468X91_ID));
 
 	updateEnabled(&options_button_profile_set, !coreState.reflow_active,
 			touchgfx::Bitmap(BITMAP_BUTTON_SET_170X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_SET_737373_170X60_ID),

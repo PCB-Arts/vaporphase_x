@@ -678,9 +678,9 @@
                   {
                     "Type": "Circle",
                     "Name": "SelectedProfileMarker",
-                    "X": 75,
+                    "X": 41,
                     "Y": 385,
-                    "Width": 15,
+                    "Width": 49,
                     "Height": 15,
                     "Color": {
                       "Red": 255,

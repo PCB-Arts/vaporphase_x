@@ -285,7 +285,7 @@ menuViewBase::menuViewBase() :
     options_solder_profile_wheel.animateToItem(0, 0);
     options_sd.add(options_solder_profile_wheel);
 
-    SelectedProfileMarker.setPosition(75, 385, 15, 15);
+    SelectedProfileMarker.setPosition(41, 385, 49, 15);
     SelectedProfileMarker.setCenter(5, 5);
     SelectedProfileMarker.setRadius(5);
     SelectedProfileMarker.setLineWidth(0);
