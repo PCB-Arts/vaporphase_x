@@ -185,7 +185,7 @@ static void start_log()
   if (!write_text(header) ||
       !write_text("Time [s];Phase;Core time [s];Target [C];PCB [C];"
                   "Galden [C];Coolant [C];Heater 1 [C];Heater 2 [C];"
-                  "Heater on;Lid fan;Pump;Quick cool fan;Radiator fan;"
+                  "Heater on;Pump;Quick cool fan;Radiator fan;"
                   "Lid lock;Heater OTP;Coolant OTP;Lid pos;Lift pos\n"))
   {
     vpx_log("Reflow log: writing the header failed");
@@ -236,15 +236,14 @@ static bool write_line(int32_t time_s)
 
   char line[192];
   tfp_snprintf(line, sizeof(line),
-               "%d;%s;%s;%s;%s;%s;%s;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d\n",
+               "%d;%s;%s;%s;%s;%s;%s;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d\n",
                (int)time_s, phase_name(state.current_state), core_time, target,
                pcb, galden, coolant, (int)monitor.heater1_temp,
                (int)monitor.heater2_temp, (int)monitor.heater_on,
-               (int)monitor.lid_cooling_fan_on, (int)monitor.coolant_pump_on,
-               (int)monitor.quick_cool_fan_on, (int)monitor.radiator_fan_speed,
-               (int)monitor.lid_lock_active, (int)monitor.heater_otp_active,
-               (int)monitor.coolant_otp_active, (int)monitor.lid_position,
-               (int)monitor.lift_position);
+               (int)monitor.coolant_pump_on, (int)monitor.quick_cool_fan_on,
+               (int)monitor.radiator_fan_speed, (int)monitor.lid_lock_active,
+               (int)monitor.heater_otp_active, (int)monitor.coolant_otp_active,
+               (int)monitor.lid_position, (int)monitor.lift_position);
 
   if (!write_text(line))
   {

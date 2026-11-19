@@ -21,7 +21,6 @@ TEMPS = [
 ]
 STATES = [
     "Heater on",
-    "Lid fan",
     "Pump",
     "Quick cool fan",
     "Radiator fan",
