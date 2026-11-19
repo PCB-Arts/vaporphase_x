@@ -477,8 +477,6 @@ void menuView::start_reflow_btn_onClick(){
 	graph_actual.invalidateContent();
 	graph_actual.invalidate();
 
-	graph_actual.addDataPoint(0);
-
 	abortedProfileText.setVisible(false);
 	abortedProfileBackground.setVisible(false);
 
@@ -639,8 +637,6 @@ void menuView::options_button_profile_set_onClick(){
 		graph_actual.clear();
 		graph_actual.invalidateContent();
 		graph_actual.invalidate();
-
-		graph_actual.addDataPoint(0);
 
 		std::string profilePath = solderProfiles[itemIndex];
 		selectedProfile = loadSolderCsv(profilePath);
