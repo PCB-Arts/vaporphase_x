@@ -6,11 +6,20 @@
   <Texts>
     <TextGroup Id="Group1" />
     <TextGroup Id="Unsorted">
+      <Text Id="SelftestBody" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Selftest started. Wait until it is finished.</Translation>
+      </Text>
+      <Text Id="SelftestTitle" Alignment="Left" TypographyId="Default_fat">
+        <Translation Language="GB">Selftest</Translation>
+      </Text>
+      <Text Id="__SingleUse_7AQU" Alignment="Left" TypographyId="medium_14">
+        <Translation Language="GB">Temperature /</Translation>
+      </Text>
       <Text Id="__SingleUse_CAMV" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">Service position</Translation>
+        <Translation Language="GB">Service Position</Translation>
       </Text>
       <Text Id="__SingleUse_369K" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">Reflow recording active</Translation>
+        <Translation Language="GB">Reflow Recording</Translation>
       </Text>
       <Text Id="__SingleUse_611K" Alignment="Left" TypographyId="Default">
         <Translation Language="GB">Profile aborted</Translation>
@@ -32,6 +41,12 @@
       </Text>
       <Text Id="CoolantOtpErrorTitle" Alignment="Left" TypographyId="Default_fat">
         <Translation Language="GB">Under temperature protection or over temperature protection detected. Please read manual. Don't turn off the Vapor Phase.</Translation>
+      </Text>
+      <Text Id="ServicePositionBody" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Press OK to release Service Position.</Translation>
+      </Text>
+      <Text Id="ServicePositionTitle" Alignment="Left" TypographyId="Default_fat">
+        <Translation Language="GB">Service Position</Translation>
       </Text>
       <Text Id="HeaterOtpErrorBody" Alignment="Left" TypographyId="Default">
         <Translation Language="GB">Heater temperature sensor problem detected, please read manual. Don't turn off the Vapor Phase.</Translation>
@@ -88,13 +103,13 @@
         <Translation Language="GB">&lt;value&gt;</Translation>
       </Text>
       <Text Id="__SingleUse_FCSJ" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">Solder profile</Translation>
+        <Translation Language="GB">Solder Profile</Translation>
       </Text>
       <Text Id="__SingleUse_W2EE" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">Open temperature</Translation>
+        <Translation Language="GB">Temperature Unit</Translation>
       </Text>
       <Text Id="__SingleUse_TT7P" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">SD card</Translation>
+        <Translation Language="GB">SD Card</Translation>
       </Text>
       <Text Id="__SingleUse_6SGZ" Alignment="Left" TypographyId="medium_14">
         <Translation Language="GB">Version: &lt;value&gt;</Translation>
@@ -106,7 +121,7 @@
         <Translation Language="GB">°&lt;value&gt;</Translation>
       </Text>
       <Text Id="__SingleUse_TIUU" Alignment="Left" TypographyId="medium_14">
-        <Translation Language="GB">Time in Seconds</Translation>
+        <Translation Language="GB">Time / Seconds</Translation>
       </Text>
       <Text Id="__SingleUse_JNOU" Alignment="Right" TypographyId="Small">
         <Translation Language="GB">&lt;&gt;</Translation>
@@ -118,7 +133,7 @@
         <Translation Language="GB">DEFAULT</Translation>
       </Text>
       <Text Id="__SingleUse_3O9T" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">Displayed Unit</Translation>
+        <Translation Language="GB">Open Temperature</Translation>
       </Text>
       <Text Id="__SingleUse_H126" Alignment="Left" TypographyId="text_graph_size">
         <Translation Language="GB">&lt;value&gt;</Translation>
@@ -144,5 +159,8 @@
     <Typography Id="text_graph_size" Font="arial.ttf" Size="16" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" WildcardCharacterRanges="a-z,A-Z,0-9" />
     <Typography Id="medium_14" Font="arial.ttf" Size="14" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" WildcardCharacters="-., 0123456789" WildcardCharacterRanges="0-9,A-Z,a-z" />
     <Typography Id="Default_fat" Font="arialbd.ttf" Size="20" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" />
+    <Typography Id="Typography_00" Font="verdana.ttf" Size="20" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" />
+    <Typography Id="Typography_01" Font="verdana.ttf" Size="20" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" />
+    <Typography Id="Typography_02" Font="verdana.ttf" Size="20" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" />
   </Typographies>
 </TextDatabase>

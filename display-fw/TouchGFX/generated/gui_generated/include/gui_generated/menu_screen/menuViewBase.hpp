@@ -80,15 +80,15 @@ public:
     {
         // Override and implement this function in menu
     }
-    virtual void modalWindowInformationClose_btn_onClick()
+    virtual void modalWindowInformationOk_btn_onClick()
     {
         // Override and implement this function in menu
     }
-    virtual void modalWindowDecisionYes_btn_onClick()
+    virtual void modalWindowDecisionOk_btn_onClick()
     {
         // Override and implement this function in menu
     }
-    virtual void modalWindowDecisionNo_btn_onClick()
+    virtual void modalWindowDecisionClose_btn_onClick()
     {
         // Override and implement this function in menu
     }
@@ -142,6 +142,7 @@ protected:
     touchgfx::Image pictogramm_galden;
     touchgfx::Image pictogramm_pcb;
     touchgfx::TextArea label_time_in_seconds;
+    touchgfx::TextArea label_time_in_seconds_1;
     touchgfx::TextAreaWithOneWildcard label_degree;
     touchgfx::Box abortedProfileBackground;
     touchgfx::TextArea abortedProfileText;
@@ -158,24 +159,24 @@ protected:
     touchgfx::DrawableListItems<custom_container_profile_select, 4> options_solder_profile_wheelListItems;
     touchgfx::Circle SelectedProfileMarker;
     touchgfx::PainterRGB888 SelectedProfileMarkerPainter;
-    touchgfx::Container options_general;
-    touchgfx::TextArea options_temp_unit_label;
-    touchgfx::TextArea options_lid_temp_label;
-    touchgfx::TextArea options_lid_service_label;
+    touchgfx::TextArea options_temp_open;
     touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  options_openlid_tem_button_eco;
     touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  options_openlid_tem_button_standard;
     touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  options_openlid_tem_button_fast;
+    touchgfx::Container options_general;
+    touchgfx::TextArea options_temperature_unit_label;
+    touchgfx::TextArea options_lid_service_label;
     touchgfx::ToggleButton options_temp_toggle_button;
     touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  options_lid_service_button;
     touchgfx::ModalWindow modalWindowDecision;
     touchgfx::TextArea modalWindowDecisionTitle;
     touchgfx::TextArea modalWindowDecisionBody;
-    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  modalWindowDecisionNo;
-    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  modalWindowDecisionYes;
+    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  modalWindowDecisionClose;
+    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  modalWindowDecisionOk;
     touchgfx::ModalWindow modalWindowInformation;
     touchgfx::TextArea modalWindowInformationTitle;
     touchgfx::TextArea modalWindowInformationBody;
-    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  modalWindowInformationClose;
+    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  modalWindowInformationOk;
 
     /*
      * Wildcard Buffers
