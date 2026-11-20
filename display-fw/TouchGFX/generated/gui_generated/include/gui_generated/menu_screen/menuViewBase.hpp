@@ -80,15 +80,15 @@ public:
     {
         // Override and implement this function in menu
     }
-    virtual void modalWindowInformationClose_btn_onClick()
+    virtual void modalWindowInformationOk_btn_onClick()
     {
         // Override and implement this function in menu
     }
-    virtual void modalWindowDecisionYes_btn_onClick()
+    virtual void modalWindowDecisionOk_btn_onClick()
     {
         // Override and implement this function in menu
     }
-    virtual void modalWindowDecisionNo_btn_onClick()
+    virtual void modalWindowDecisionClose_btn_onClick()
     {
         // Override and implement this function in menu
     }
@@ -171,12 +171,12 @@ protected:
     touchgfx::ModalWindow modalWindowDecision;
     touchgfx::TextArea modalWindowDecisionTitle;
     touchgfx::TextArea modalWindowDecisionBody;
-    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  modalWindowDecisionNo;
-    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  modalWindowDecisionYes;
+    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  modalWindowDecisionClose;
+    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  modalWindowDecisionOk;
     touchgfx::ModalWindow modalWindowInformation;
     touchgfx::TextArea modalWindowInformationTitle;
     touchgfx::TextArea modalWindowInformationBody;
-    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  modalWindowInformationClose;
+    touchgfx::ImageButtonStyle< touchgfx::TouchButtonTrigger >  modalWindowInformationOk;
 
     /*
      * Wildcard Buffers

@@ -573,8 +573,8 @@
                   {
                     "Type": "TextArea",
                     "Name": "options_solder_profile_label",
-                    "X": 48,
-                    "Y": 274,
+                    "X": 46,
+                    "Y": 281,
                     "Width": 119,
                     "Height": 25,
                     "TextId": "__SingleUse_FCSJ",
@@ -589,11 +589,10 @@
                   {
                     "Type": "FlexButton",
                     "Name": "options_sd_card_button_mount",
-                    "X": 587,
+                    "X": 585,
                     "Y": 205,
                     "Width": 170,
                     "Height": 60,
-                    "Visible": false,
                     "ButtonTrigger": {
                       "Type": "TouchButtonTrigger"
                     },
@@ -609,7 +608,7 @@
                     "Type": "FlexButton",
                     "Name": "options_sd_card_button_eject",
                     "X": 585,
-                    "Y": 210,
+                    "Y": 205,
                     "Width": 170,
                     "Height": 60,
                     "ButtonTrigger": {
@@ -644,7 +643,7 @@
                   {
                     "Type": "FlexButton",
                     "Name": "options_button_profile_set",
-                    "X": 587,
+                    "X": 585,
                     "Y": 355,
                     "Width": 170,
                     "Height": 60,
@@ -871,7 +870,7 @@
               },
               {
                 "Type": "FlexButton",
-                "Name": "modalWindowDecisionNo",
+                "Name": "modalWindowDecisionClose",
                 "X": 427,
                 "Y": 9,
                 "Width": 45,
@@ -889,7 +888,7 @@
               },
               {
                 "Type": "FlexButton",
-                "Name": "modalWindowDecisionYes",
+                "Name": "modalWindowDecisionOk",
                 "X": 155,
                 "Y": 213,
                 "Width": 170,
@@ -943,7 +942,7 @@
               },
               {
                 "Type": "FlexButton",
-                "Name": "modalWindowInformationClose",
+                "Name": "modalWindowInformationOk",
                 "X": 154,
                 "Y": 213,
                 "Width": 170,
@@ -1074,36 +1073,36 @@
             }
           },
           {
-            "InteractionName": "modalWindowInformationClose_btn_onClick",
+            "InteractionName": "modalWindowInformationOk_btn_onClick",
             "Trigger": {
               "Type": "TriggerClicked",
-              "TriggerComponent": "modalWindowInformationClose"
+              "TriggerComponent": "modalWindowInformationOk"
             },
             "Action": {
               "Type": "ActionCustom",
-              "FunctionName": "modalWindowInformationClose_btn_onClick"
+              "FunctionName": "modalWindowInformationOk_btn_onClick"
             }
           },
           {
-            "InteractionName": "modalWindowDecisionYes_btn_onClick",
+            "InteractionName": "modalWindowDecisionOk_btn_onClick",
             "Trigger": {
               "Type": "TriggerClicked",
-              "TriggerComponent": "modalWindowDecisionYes"
+              "TriggerComponent": "modalWindowDecisionOk"
             },
             "Action": {
               "Type": "ActionCustom",
-              "FunctionName": "modalWindowDecisionYes_btn_onClick"
+              "FunctionName": "modalWindowDecisionOk_btn_onClick"
             }
           },
           {
-            "InteractionName": "modalWindowDecisionNo_btn_onClick",
+            "InteractionName": "modalWindowDecisionClose_btn_onClick",
             "Trigger": {
               "Type": "TriggerClicked",
-              "TriggerComponent": "modalWindowDecisionNo"
+              "TriggerComponent": "modalWindowDecisionClose"
             },
             "Action": {
               "Type": "ActionCustom",
-              "FunctionName": "modalWindowDecisionNo_btn_onClick"
+              "FunctionName": "modalWindowDecisionClose_btn_onClick"
             }
           },
           {
@@ -1121,7 +1120,7 @@
             "InteractionName": "showAbortedProfileBackgroound",
             "Trigger": {
               "Type": "TriggerClicked",
-              "TriggerComponent": "modalWindowDecisionYes"
+              "TriggerComponent": "modalWindowDecisionOk"
             },
             "Action": {
               "Type": "ActionShow",
@@ -1132,7 +1131,7 @@
             "InteractionName": "showAbortedProfileText",
             "Trigger": {
               "Type": "TriggerClicked",
-              "TriggerComponent": "modalWindowDecisionYes"
+              "TriggerComponent": "modalWindowDecisionOk"
             },
             "Action": {
               "Type": "ActionShow",
@@ -1143,7 +1142,7 @@
             "InteractionName": "showGraphWhenAborted",
             "Trigger": {
               "Type": "TriggerClicked",
-              "TriggerComponent": "modalWindowDecisionYes"
+              "TriggerComponent": "modalWindowDecisionOk"
             },
             "Action": {
               "Type": "ActionExecuteCode",

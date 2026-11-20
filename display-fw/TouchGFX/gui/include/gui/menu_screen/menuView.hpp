@@ -74,9 +74,9 @@ protected:
     void options_sd_card_button_mount_onClick();
     void options_sd_card_button_eject_onClick();
     void options_temp_toggle_button_onClick();
-    void modalWindowInformationClose_btn_onClick();
-    void modalWindowDecisionYes_btn_onClick();
-    void modalWindowDecisionNo_btn_onClick();
+    void modalWindowInformationOk_btn_onClick();
+    void modalWindowDecisionOk_btn_onClick();
+    void modalWindowDecisionClose_btn_onClick();
     void options_lid_service_button_onClick();
     void options_sd_card_button_export_onClick();
 

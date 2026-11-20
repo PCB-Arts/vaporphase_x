@@ -20,12 +20,12 @@ menuView::menuView():
 {
 	modal::ModalElements elements = {
 		.modalWindowInformation = &modalWindowInformation,
-		.modalWindowInformationClose = &modalWindowInformationClose,
+		.modalWindowInformationClose = &modalWindowInformationOk,
 		.modalWindowInformationBody = &modalWindowInformationBody,
 		.modalWindowInformationTitle = &modalWindowInformationTitle,
 		.modalWindowDecision = &modalWindowDecision,
-		.modalWindowDecisionYes = &modalWindowDecisionYes,
-		.modalWindowDecisionNo = &modalWindowDecisionNo,
+		.modalWindowDecisionYes = &modalWindowDecisionOk,
+		.modalWindowDecisionNo = &modalWindowDecisionClose,
 		.modalWindowDecisionBody = &modalWindowDecisionBody,
 		.modalWindowDecisionTitle = &modalWindowDecisionTitle,
 	};
@@ -206,7 +206,15 @@ void menuView::updateSelftest(){
 		vpx_log("Selftest button held");
 		CoreCom_StartSelftest();
 	}
-}
+
+
+	modalWrapper.sheduleInformationModal(
+			touchgfx::TypedText(T_SELFTESTTITLE),
+			touchgfx::TypedText(T_SELFTESTBODY),
+			NULL);
+
+	//Modal Information Ok Decision should be only possible if Selftest is finished.
+	}
 
 void menuView::adaptUiToUnits(){
 	if(currentUnit == CELSIUS){
@@ -234,6 +242,15 @@ void startErrorCallback() {
 
 void openLidErrorCallback() {
 	vpx_log("Failure message 'open lid conditions not met' acknowledged");
+}
+
+void releaseServicePositionCallback() {
+	vpx_log("Release service position pushed");
+
+	//move down lid first
+	//then move lift (hardware lock)
+
+
 }
 
 void stopReflowDecisionCallback(bool answer){
@@ -408,12 +425,16 @@ void menuView::updateButtonStates() {
 			touchgfx::Bitmap(BITMAP_CLOSE_LID_BUTTON_468X91_ID), touchgfx::Bitmap(BITMAP_CLOSE_LID_BUTTON_PRESSED_468X91_ID),
 			touchgfx::Bitmap(BITMAP_CLOSE_LID_BUTTON_PRESSED_468X91_ID));
 
-	updateEnabled(&options_button_profile_set, !coreState.reflow_active,
+	updateEnabled(&options_lid_service_button, (coreState.can_open_lid && coreState.lid_state == LID_STATE_CLOSED),
 			touchgfx::Bitmap(BITMAP_BUTTON_SET_170X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_SET_737373_170X60_ID),
 			touchgfx::Bitmap(BITMAP_BUTTON_SET_737373_170X60_ID));
 
 	updateVisibility(&options_sd_card_button_eject, SD_Mounted());
 	updateVisibility(&options_sd_card_button_mount, !SD_Mounted());
+
+	updateEnabled(&options_button_profile_set, !coreState.reflow_active,
+				touchgfx::Bitmap(BITMAP_BUTTON_SET_170X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_SET_737373_170X60_ID),
+				touchgfx::Bitmap(BITMAP_BUTTON_SET_737373_170X60_ID));
 }
 
 void menuView::close_lid_btn_onClick()
@@ -706,15 +727,15 @@ void menuView::adaptGraphTimeAxis(){
 	graph_target.invalidate();
 }
 
-void menuView::modalWindowInformationClose_btn_onClick(){
+void menuView::modalWindowInformationOk_btn_onClick(){
 	modalWrapper.closeModal(false);
 }
 
-void menuView::modalWindowDecisionYes_btn_onClick(){
+void menuView::modalWindowDecisionOk_btn_onClick(){
 	modalWrapper.closeModal(true);
 }
 
-void menuView::modalWindowDecisionNo_btn_onClick(){
+void menuView::modalWindowDecisionClose_btn_onClick(){
 	modalWrapper.closeModal(false);
 
 }
@@ -731,8 +752,17 @@ void menuView::options_lid_service_button_onClick(){
 				openLidErrorCallback);
 		return;
 	}
-
+	//maybe first move to service position and then apply service position modal
 	CoreCom_ServicePosition();
+
+	// if service position is reached show modal - or OK Button is not touchable until service position is reached
+	modalWrapper.sheduleInformationModal(
+			touchgfx::TypedText(T_SERVICEPOSITIONTITLE),
+			touchgfx::TypedText(T_SERVICEPOSITIONBODY),
+			releaseServicePositionCallback);
+
+
+
 }
 
 void menuView::options_sd_card_button_export_onClick(){

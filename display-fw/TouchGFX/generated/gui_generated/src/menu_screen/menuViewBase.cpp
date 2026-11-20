@@ -240,7 +240,7 @@ menuViewBase::menuViewBase() :
     options_sd_card_export_label.setTypedText(touchgfx::TypedText(T___SINGLEUSE_369K));
     options_sd.add(options_sd_card_export_label);
 
-    options_solder_profile_label.setXY(48, 274);
+    options_solder_profile_label.setXY(46, 281);
     options_solder_profile_label.setColor(touchgfx::Color::getColorFromRGB(255, 255, 255));
     options_solder_profile_label.setLinespacing(0);
     options_solder_profile_label.setTypedText(touchgfx::TypedText(T___SINGLEUSE_FCSJ));
@@ -248,15 +248,14 @@ menuViewBase::menuViewBase() :
 
     options_sd_card_button_mount.setBitmaps(Bitmap(BITMAP_BUTTON_MOUNT_170X60_ID), Bitmap(BITMAP_BUTTON_MOUNT_737373_170X60_ID));
     options_sd_card_button_mount.setBitmapXY(0, 0);
-    options_sd_card_button_mount.setVisible(false);
     options_sd_card_button_mount.setAction(flexButtonCallback);
-    options_sd_card_button_mount.setPosition(587, 205, 170, 60);
+    options_sd_card_button_mount.setPosition(585, 205, 170, 60);
     options_sd.add(options_sd_card_button_mount);
 
     options_sd_card_button_eject.setBitmaps(Bitmap(BITMAP_BUTTON_EJECT_170X60_ID), Bitmap(BITMAP_BUTTON_EJECT_737373_170X60_ID));
     options_sd_card_button_eject.setBitmapXY(0, 0);
     options_sd_card_button_eject.setAction(flexButtonCallback);
-    options_sd_card_button_eject.setPosition(585, 210, 170, 60);
+    options_sd_card_button_eject.setPosition(585, 205, 170, 60);
     options_sd.add(options_sd_card_button_eject);
 
     options_sd_card_button_export.setBitmaps(Bitmap(BITMAP_BUTTON_ACTIVE_170X60_ID), Bitmap(BITMAP_BUTTON_INACTIVE_737373_170X60_ID));
@@ -268,7 +267,7 @@ menuViewBase::menuViewBase() :
     options_button_profile_set.setBitmaps(Bitmap(BITMAP_BUTTON_SET_170X60_ID), Bitmap(BITMAP_BUTTON_SET_737373_170X60_ID));
     options_button_profile_set.setBitmapXY(0, 0);
     options_button_profile_set.setAction(flexButtonCallback);
-    options_button_profile_set.setPosition(587, 355, 170, 60);
+    options_button_profile_set.setPosition(585, 355, 170, 60);
     options_sd.add(options_button_profile_set);
 
     options_solder_profile_wheel.setPosition(46, 313, 500, 150);
@@ -367,17 +366,17 @@ menuViewBase::menuViewBase() :
     modalWindowDecisionBody.setTypedText(touchgfx::TypedText(T___SINGLEUSE_53ZW));
     modalWindowDecision.add(modalWindowDecisionBody);
 
-    modalWindowDecisionNo.setBitmaps(Bitmap(BITMAP_BUTTON_X_737373_45X45_ID), Bitmap(BITMAP_BUTTON_X_737373_45X45_ID));
-    modalWindowDecisionNo.setBitmapXY(0, 0);
-    modalWindowDecisionNo.setAction(flexButtonCallback);
-    modalWindowDecisionNo.setPosition(427, 9, 45, 45);
-    modalWindowDecision.add(modalWindowDecisionNo);
+    modalWindowDecisionClose.setBitmaps(Bitmap(BITMAP_BUTTON_X_737373_45X45_ID), Bitmap(BITMAP_BUTTON_X_737373_45X45_ID));
+    modalWindowDecisionClose.setBitmapXY(0, 0);
+    modalWindowDecisionClose.setAction(flexButtonCallback);
+    modalWindowDecisionClose.setPosition(427, 9, 45, 45);
+    modalWindowDecision.add(modalWindowDecisionClose);
 
-    modalWindowDecisionYes.setBitmaps(Bitmap(BITMAP_BUTTON_OK_170X45_ID), Bitmap(BITMAP_BUTTON_OK_170X45_ID));
-    modalWindowDecisionYes.setBitmapXY(0, 0);
-    modalWindowDecisionYes.setAction(flexButtonCallback);
-    modalWindowDecisionYes.setPosition(155, 213, 170, 45);
-    modalWindowDecision.add(modalWindowDecisionYes);
+    modalWindowDecisionOk.setBitmaps(Bitmap(BITMAP_BUTTON_OK_170X45_ID), Bitmap(BITMAP_BUTTON_OK_170X45_ID));
+    modalWindowDecisionOk.setBitmapXY(0, 0);
+    modalWindowDecisionOk.setAction(flexButtonCallback);
+    modalWindowDecisionOk.setPosition(155, 213, 170, 45);
+    modalWindowDecision.add(modalWindowDecisionOk);
 
     add(modalWindowDecision);
 
@@ -398,11 +397,11 @@ menuViewBase::menuViewBase() :
     modalWindowInformationBody.setTypedText(touchgfx::TypedText(T___SINGLEUSE_GDGM));
     modalWindowInformation.add(modalWindowInformationBody);
 
-    modalWindowInformationClose.setBitmaps(Bitmap(BITMAP_BUTTON_OK_170X45_ID), Bitmap(BITMAP_BUTTON_OK_737373_170X45_ID));
-    modalWindowInformationClose.setBitmapXY(0, 0);
-    modalWindowInformationClose.setAction(flexButtonCallback);
-    modalWindowInformationClose.setPosition(154, 213, 170, 45);
-    modalWindowInformation.add(modalWindowInformationClose);
+    modalWindowInformationOk.setBitmaps(Bitmap(BITMAP_BUTTON_OK_170X45_ID), Bitmap(BITMAP_BUTTON_OK_737373_170X45_ID));
+    modalWindowInformationOk.setBitmapXY(0, 0);
+    modalWindowInformationOk.setAction(flexButtonCallback);
+    modalWindowInformationOk.setPosition(154, 213, 170, 45);
+    modalWindowInformation.add(modalWindowInformationOk);
 
     add(modalWindowInformation);
 }
@@ -493,40 +492,40 @@ void menuViewBase::flexButtonCallbackHandler(const touchgfx::AbstractButtonConta
         //Call options_sd_card_button_eject_onClick
         options_sd_card_button_eject_onClick();
     }
-    if (&src == &modalWindowInformationClose)
+    if (&src == &modalWindowInformationOk)
     {
-        //modalWindowInformationClose_btn_onClick
-        //When modalWindowInformationClose clicked call virtual function
-        //Call modalWindowInformationClose_btn_onClick
-        modalWindowInformationClose_btn_onClick();
+        //modalWindowInformationOk_btn_onClick
+        //When modalWindowInformationOk clicked call virtual function
+        //Call modalWindowInformationOk_btn_onClick
+        modalWindowInformationOk_btn_onClick();
     }
-    if (&src == &modalWindowDecisionYes)
+    if (&src == &modalWindowDecisionOk)
     {
-        //modalWindowDecisionYes_btn_onClick
-        //When modalWindowDecisionYes clicked call virtual function
-        //Call modalWindowDecisionYes_btn_onClick
-        modalWindowDecisionYes_btn_onClick();
+        //modalWindowDecisionOk_btn_onClick
+        //When modalWindowDecisionOk clicked call virtual function
+        //Call modalWindowDecisionOk_btn_onClick
+        modalWindowDecisionOk_btn_onClick();
         //showAbortedProfileBackgroound
-        //When modalWindowDecisionYes clicked show abortedProfileBackground
+        //When modalWindowDecisionOk clicked show abortedProfileBackground
         //Show abortedProfileBackground
         abortedProfileBackground.setVisible(true);
         abortedProfileBackground.invalidate();
         //showAbortedProfileText
-        //When modalWindowDecisionYes clicked show abortedProfileText
+        //When modalWindowDecisionOk clicked show abortedProfileText
         //Show abortedProfileText
         abortedProfileText.setVisible(true);
         abortedProfileText.invalidate();
         //showGraphWhenAborted
-        //When modalWindowDecisionYes clicked execute C++ code
+        //When modalWindowDecisionOk clicked execute C++ code
         //Execute C++ code
         menu_container.setSelectedPage(1);
     }
-    if (&src == &modalWindowDecisionNo)
+    if (&src == &modalWindowDecisionClose)
     {
-        //modalWindowDecisionNo_btn_onClick
-        //When modalWindowDecisionNo clicked call virtual function
-        //Call modalWindowDecisionNo_btn_onClick
-        modalWindowDecisionNo_btn_onClick();
+        //modalWindowDecisionClose_btn_onClick
+        //When modalWindowDecisionClose clicked call virtual function
+        //Call modalWindowDecisionClose_btn_onClick
+        modalWindowDecisionClose_btn_onClick();
     }
     if (&src == &options_lid_service_button)
     {

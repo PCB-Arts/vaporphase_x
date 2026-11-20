@@ -6,6 +6,12 @@
   <Texts>
     <TextGroup Id="Group1" />
     <TextGroup Id="Unsorted">
+      <Text Id="SelftestBody" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Selftest started. Wait until it is finished.</Translation>
+      </Text>
+      <Text Id="SelftestTitle" Alignment="Left" TypographyId="Default_fat">
+        <Translation Language="GB">Selftest</Translation>
+      </Text>
       <Text Id="__SingleUse_7AQU" Alignment="Left" TypographyId="medium_14">
         <Translation Language="GB">Temperature /</Translation>
       </Text>
@@ -35,6 +41,12 @@
       </Text>
       <Text Id="CoolantOtpErrorTitle" Alignment="Left" TypographyId="Default_fat">
         <Translation Language="GB">Under temperature protection or over temperature protection detected. Please read manual. Don't turn off the Vapor Phase.</Translation>
+      </Text>
+      <Text Id="ServicePositionBody" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Press OK to release Service Position.</Translation>
+      </Text>
+      <Text Id="ServicePositionTitle" Alignment="Left" TypographyId="Default_fat">
+        <Translation Language="GB">Service Position</Translation>
       </Text>
       <Text Id="HeaterOtpErrorBody" Alignment="Left" TypographyId="Default">
         <Translation Language="GB">Heater temperature sensor problem detected, please read manual. Don't turn off the Vapor Phase.</Translation>
