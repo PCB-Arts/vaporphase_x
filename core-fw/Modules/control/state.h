@@ -26,7 +26,7 @@
 void State_Init();
 void State_SetReflow(bool active);
 void State_SetLidOpen(bool open);
-void State_SetServicePosition();
+void State_SetServicePosition(bool active);
 void State_Worker();
 void State_SetLidOpenMode(LidOpenMode mode);
 void State_StartSelftest();

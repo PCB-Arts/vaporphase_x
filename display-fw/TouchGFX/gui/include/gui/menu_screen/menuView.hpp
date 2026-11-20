@@ -10,6 +10,7 @@
 #include "ProfileParser.hpp"
 #include "Modal.hpp"
 #include "UiErrorState.hpp"
+#include "vpx_types.h"
 #include "stm32u5xx.h"
 
 #define USER_FLASH_ADDRESS ((uint32_t*) ((0x08000000 + 4096 * 1024) - 8 * 1024))
@@ -119,6 +120,7 @@ protected:
     void updateTemperatureGraph();
     void updateTemperatureAndState();
     void updateButtonStates();
+    void updateServicePositionDialog(const Vpx_CoreStateTypeDef& coreState);
     void updateEnabledBitmapsOnly(touchgfx::ImageButtonStyle<touchgfx::TouchButtonTrigger>* button, bool shouldBeEnabled,
     		const touchgfx::Bitmap& bmpReleased, const touchgfx::Bitmap& bmpPressed,
     		const touchgfx::Bitmap& bmpDisabled, bool* enabledState);

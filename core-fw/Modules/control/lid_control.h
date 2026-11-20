@@ -35,6 +35,10 @@ void lid_control_lid_close();
 
 // move the lift to the top, then open the lid (if it is closed)
 void lid_control_service_position();
+// close the lid, then move the lift down (if in the service position)
+void lid_control_service_release();
+// from starting the service position until the lift is moved down again
+bool lid_control_service_active();
 LidState lid_control_lid_state();
 
 void lid_control_set_lid_open_mode(LidOpenMode lidOpenMode);

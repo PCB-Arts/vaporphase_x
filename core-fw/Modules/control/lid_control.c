@@ -36,6 +36,9 @@ enum service_step_t
   SERVICE_NONE,
   SERVICE_LIFT_TO_TOP,
   SERVICE_OPEN_LID,
+  SERVICE_AT_POSITION,
+  SERVICE_CLOSE_LID,
+  SERVICE_LIFT_DOWN,
 };
 static enum service_step_t service_step = SERVICE_NONE;
 static LidOpenMode lid_control_lid_open_mode = VPX_STANDARD;
@@ -86,6 +89,38 @@ static void service_position_worker()
       vpx_log(axis_forward_limit_switch_active(&lid_axis)
                   ? "Service position reached"
                   : "Service position: lid stopped before fully open");
+      service_step = SERVICE_AT_POSITION;
+    }
+    break;
+
+  case SERVICE_AT_POSITION:
+    // stays here until released
+    break;
+
+  case SERVICE_CLOSE_LID:
+    if (axis_stopped(&lid_axis) && axis_stopped(&lift_axis))
+    {
+      if (!axis_backward_limit_switch_active(&lid_axis))
+      {
+        // With the lid open the lift doesn't move on the device. Stay in the
+        // service position, so the release can be retried.
+        vpx_log("Service position release: lid stopped before closed");
+        service_step = SERVICE_AT_POSITION;
+        break;
+      }
+
+      // down to the lid open position, where it is after booting
+      lift_lid_open_state();
+      service_step = SERVICE_LIFT_DOWN;
+    }
+    break;
+
+  case SERVICE_LIFT_DOWN:
+    if (axis_stopped(&lift_axis))
+    {
+      vpx_log(lift_lid_open_state_reached()
+                  ? "Service position released"
+                  : "Service position release: lift not moved down");
       service_step = SERVICE_NONE;
     }
     break;
@@ -141,14 +176,16 @@ void lid_control_lid_open()
 
 void lid_control_lid_close()
 {
-  // cancels a pending open or service sequence
-  service_step = SERVICE_NONE;
+  // in the service position the lift is moved down again after closing
+  if (lid_control_service_active())
+  {
+    lid_control_service_release();
+    return;
+  }
+
+  // cancels a pending open
   lid_prepare_opening = false;
 
-  // The lift stays where it is, e.g. at the top after the service position.
-  // Lowering it first with the open lid didn't move it on the device (the
-  // step count ran down anyway). The next open moves it to the access height
-  // first.
   axis_move(&lid_axis, BWD);
 }
 
@@ -166,6 +203,30 @@ void lid_control_service_position()
   service_step = SERVICE_LIFT_TO_TOP;
 }
 
+void lid_control_service_release()
+{
+  switch (service_step)
+  {
+  case SERVICE_LIFT_TO_TOP:
+  case SERVICE_OPEN_LID:
+  case SERVICE_AT_POSITION:
+    break;
+
+  default:
+    // not in the service position or already releasing
+    return;
+  }
+
+  // Close the lid first: with the lid open the lift doesn't move on the
+  // device, but the step count runs anyway. The lift is moved down once the lid
+  // is closed.
+  axis_move(&lift_axis, DIRECTION_NONE);
+  axis_move(&lid_axis, BWD);
+  service_step = SERVICE_CLOSE_LID;
+}
+
+bool lid_control_service_active() { return service_step != SERVICE_NONE; }
+
 LidState lid_control_lid_state()
 {
   enum axis_mode_t status = axis_status(&lid_axis);
@@ -174,7 +235,22 @@ LidState lid_control_lid_state()
   if (status == AXIS_ERROR)
     return LID_STATE_ERROR;
 
-  if (lid_prepare_opening || service_step != SERVICE_NONE)
+  switch (service_step)
+  {
+  case SERVICE_LIFT_TO_TOP:
+  case SERVICE_OPEN_LID:
+    return LID_STATE_OPENING;
+
+  case SERVICE_CLOSE_LID:
+  case SERVICE_LIFT_DOWN:
+    // not closed until the lift is moved down again
+    return LID_STATE_CLOSING;
+
+  default:
+    break;
+  }
+
+  if (lid_prepare_opening)
     return LID_STATE_OPENING;
 
   if (status != AXIS_NORMAL)

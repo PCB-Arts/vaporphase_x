@@ -97,6 +97,7 @@ bool State_CanStartSelftest()
       lid_state == LID_STATE_CLOSED || lid_state == LID_STATE_OPEN;
 
   return State_BaseStartCondition() && lid_at_rest &&
+         !lid_control_service_active() &&
          State_StartSelftestGaldenTemperatureCondition();
 }
 
@@ -173,13 +174,20 @@ void State_SetLidOpen(bool open)
   vpx_log(open ? "open lid" : "close lid");
 }
 
-void State_SetServicePosition()
+void State_SetServicePosition(bool active)
 {
   Vpx_CoreStateTypeDef state = State_getState();
 
   if (state.error)
   {
     vpx_log("SetServicePosition on Error state");
+    return;
+  }
+
+  if (!active)
+  {
+    lid_control_service_release();
+    vpx_log("release service position");
     return;
   }
 
@@ -297,6 +305,8 @@ Vpx_CoreStateTypeDef State_getState()
   state.selftest_active = selftest_active();
 
   state.current_state = State_CurrentState();
+
+  state.service_position_active = lid_control_service_active();
 
   return state;
 }

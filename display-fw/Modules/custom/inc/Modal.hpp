@@ -2,7 +2,7 @@
 #define MODAL_HPP
 
 #include <cstddef>
-#include <queue>
+#include <deque>
 // #include <touchgfx/widgets/Button.hpp>
 #include <touchgfx/containers/ModalWindow.hpp>
 #include <touchgfx/containers/buttons/Buttons.hpp>
@@ -26,6 +26,9 @@ struct ModalElements
       *modalWindowDecisionNo;
   touchgfx::TextArea *modalWindowDecisionBody;
   touchgfx::TextArea *modalWindowDecisionTitle;
+  // OK of the information modal while it can't be pressed yet
+  touchgfx::Bitmap modalWindowInformationCloseReleased;
+  touchgfx::Bitmap modalWindowInformationCloseDisabled;
 };
 
 typedef void (*ModalInformationCallback)();
@@ -46,12 +49,14 @@ struct ShowInformation
 
   ModalInformationCallback informationCallback;
   ModalDecisionCallback decisionCallback;
+
+  bool okEnabled;
 };
 
 class Modal
 {
   ModalElements elements;
-  std::queue<ShowInformation> sheduledModalDisplays;
+  std::deque<ShowInformation> sheduledModalDisplays;
 
   bool showing = false;
   ShowInformation activeModalInformation;
@@ -74,6 +79,7 @@ class Modal
       elements.modalWindowInformation->setVisible(true);
       elements.modalWindowInformationClose->setVisible(
           info.type == ShowInformationType::INFO);
+      applyInformationOkEnabled(info.okEnabled);
     }
     else
     {
@@ -88,11 +94,57 @@ class Modal
     elements.modalWindowInformation->invalidate();
   }
 
+  void applyInformationOkEnabled(bool enabled)
+  {
+    touchgfx::ImageButtonStyle<touchgfx::TouchButtonTrigger> *ok =
+        elements.modalWindowInformationClose;
+
+    if (ok->isTouchable() == enabled)
+    {
+      return;
+    }
+
+    ok->setTouchable(enabled);
+    ok->setBitmaps(enabled ? elements.modalWindowInformationCloseReleased
+                           : elements.modalWindowInformationCloseDisabled,
+                   elements.modalWindowInformationCloseDisabled);
+    ok->invalidate();
+  }
+
+  static bool isInformationModal(const ShowInformation &info,
+                                 ModalInformationCallback callback)
+  {
+    return info.type == ShowInformationType::INFO &&
+           info.informationCallback == callback;
+  }
+
+  void hideModal()
+  {
+    elements.modalWindowDecision->setVisible(false);
+    elements.modalWindowDecision->invalidate();
+
+    elements.modalWindowInformation->setVisible(false);
+    elements.modalWindowInformation->invalidate();
+  }
+
+  void showNextModal()
+  {
+    if (sheduledModalDisplays.empty())
+    {
+      showing = false;
+      return;
+    }
+
+    ShowInformation next = sheduledModalDisplays.front();
+    sheduledModalDisplays.pop_front();
+    showModal(next);
+  }
+
   void pushInfo(const ShowInformation &info)
   {
     if (showing)
     {
-      sheduledModalDisplays.push(info);
+      sheduledModalDisplays.push_back(info);
       return;
     }
 
@@ -122,15 +174,18 @@ public:
 
   Modal(ModalElements elements) { this->elements = elements; }
 
+  /* okEnabled false: OK can't be pressed until setInformationOkEnabled() */
   void sheduleInformationModal(touchgfx::TypedText title,
                                touchgfx::TypedText body,
-                               ModalInformationCallback callback = NULL)
+                               ModalInformationCallback callback = NULL,
+                               bool okEnabled = true)
   {
     ShowInformation info = {.type = ShowInformationType::INFO,
                             .title = title,
                             .body = body,
                             .informationCallback = callback,
-                            .decisionCallback = NULL};
+                            .decisionCallback = NULL,
+                            .okEnabled = okEnabled};
 
     pushInfo(info);
   }
@@ -142,7 +197,8 @@ public:
                             .title = title,
                             .body = body,
                             .informationCallback = NULL,
-                            .decisionCallback = callback};
+                            .decisionCallback = callback,
+                            .okEnabled = true};
 
     pushInfo(info);
   }
@@ -154,29 +210,55 @@ public:
                             .title = title,
                             .body = body,
                             .informationCallback = NULL,
-                            .decisionCallback = NULL};
+                            .decisionCallback = NULL,
+                            .okEnabled = true};
 
     pushInfo(info);
   }
 
-  void closeModal(bool answer)
+  /* Enables or disables OK of the information modals with this callback,
+   * shown or still sheduled */
+  void setInformationOkEnabled(ModalInformationCallback callback, bool enabled)
   {
-    elements.modalWindowDecision->setVisible(false);
-    elements.modalWindowDecision->invalidate();
-
-    elements.modalWindowInformation->setVisible(false);
-    elements.modalWindowInformation->invalidate();
-
-    executeCallback(answer);
-
-    if (sheduledModalDisplays.empty())
+    for (ShowInformation &info : sheduledModalDisplays)
     {
-      showing = false;
-      return;
+      if (isInformationModal(info, callback))
+      {
+        info.okEnabled = enabled;
+      }
     }
 
-    showModal(sheduledModalDisplays.front());
-    sheduledModalDisplays.pop();
+    if (showing && isInformationModal(activeModalInformation, callback) &&
+        activeModalInformation.okEnabled != enabled)
+    {
+      activeModalInformation.okEnabled = enabled;
+      applyInformationOkEnabled(enabled);
+    }
+  }
+
+  /* Removes the information modals with this callback, shown or still
+   * sheduled, without calling it */
+  void cancelInformationModal(ModalInformationCallback callback)
+  {
+    for (auto it = sheduledModalDisplays.begin();
+         it != sheduledModalDisplays.end();)
+    {
+      it = isInformationModal(*it, callback) ? sheduledModalDisplays.erase(it)
+                                             : it + 1;
+    }
+
+    if (showing && isInformationModal(activeModalInformation, callback))
+    {
+      hideModal();
+      showNextModal();
+    }
+  }
+
+  void closeModal(bool answer)
+  {
+    hideModal();
+    executeCallback(answer);
+    showNextModal();
   }
 
   /* display info, but only if no other modal is open, not quittable by user */

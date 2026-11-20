@@ -28,6 +28,8 @@ menuView::menuView():
 		.modalWindowDecisionNo = &modalWindowDecisionClose,
 		.modalWindowDecisionBody = &modalWindowDecisionBody,
 		.modalWindowDecisionTitle = &modalWindowDecisionTitle,
+		.modalWindowInformationCloseReleased = touchgfx::Bitmap(BITMAP_BUTTON_OK_170X45_ID),
+		.modalWindowInformationCloseDisabled = touchgfx::Bitmap(BITMAP_BUTTON_OK_737373_170X45_ID),
 	};
 	modalWrapper = modal::Modal(elements);
 	errorState.setModal(&modalWrapper);
@@ -205,16 +207,14 @@ void menuView::updateSelftest(){
 		selftestTriggered = true;
 		vpx_log("Selftest button held");
 		CoreCom_StartSelftest();
+
+		//Modal Information Ok Decision should be only possible if Selftest is finished.
+		modalWrapper.sheduleInformationModal(
+				touchgfx::TypedText(T_SELFTESTTITLE),
+				touchgfx::TypedText(T_SELFTESTBODY),
+				NULL);
 	}
-
-
-	modalWrapper.sheduleInformationModal(
-			touchgfx::TypedText(T_SELFTESTTITLE),
-			touchgfx::TypedText(T_SELFTESTBODY),
-			NULL);
-
-	//Modal Information Ok Decision should be only possible if Selftest is finished.
-	}
+}
 
 void menuView::adaptUiToUnits(){
 	if(currentUnit == CELSIUS){
@@ -244,13 +244,16 @@ void openLidErrorCallback() {
 	vpx_log("Failure message 'open lid conditions not met' acknowledged");
 }
 
+// The service position dialog is shown while the core moves to the service
+// position and while it is there. Its OK can only be pressed once it is reached
+// and releases it (the core closes the lid, then moves the lift down).
+static bool servicePositionDialogShown = false;
+
 void releaseServicePositionCallback() {
 	vpx_log("Release service position pushed");
-
-	//move down lid first
-	//then move lift (hardware lock)
-
-
+	// servicePositionDialogShown stays set until the core reports the lid closing,
+	// so the core state from before the release doesn't show the dialog again
+	CoreCom_ReleaseServicePosition();
 }
 
 void stopReflowDecisionCallback(bool answer){
@@ -435,6 +438,34 @@ void menuView::updateButtonStates() {
 	updateEnabled(&options_button_profile_set, !coreState.reflow_active,
 				touchgfx::Bitmap(BITMAP_BUTTON_SET_170X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_SET_737373_170X60_ID),
 				touchgfx::Bitmap(BITMAP_BUTTON_SET_737373_170X60_ID));
+
+	updateServicePositionDialog(coreState);
+}
+
+void menuView::updateServicePositionDialog(const Vpx_CoreStateTypeDef& coreState) {
+	bool reached = coreState.service_position_active && coreState.lid_state == LID_STATE_OPEN;
+	bool moving = coreState.service_position_active && coreState.lid_state == LID_STATE_OPENING;
+
+	// Also after the display restarted and again if the lid stopped before it was closed on the release
+	if(!servicePositionDialogShown) {
+		if(reached || moving) {
+			servicePositionDialogShown = true;
+			modalWrapper.sheduleInformationModal(
+					touchgfx::TypedText(T_SERVICEPOSITIONTITLE),
+					touchgfx::TypedText(T_SERVICEPOSITIONBODY),
+					releaseServicePositionCallback, reached);
+		}
+		return;
+	}
+
+	// released, or aborted by the core, e.g. on an axis error
+	if(!reached && !moving) {
+		servicePositionDialogShown = false;
+		modalWrapper.cancelInformationModal(releaseServicePositionCallback);
+		return;
+	}
+
+	modalWrapper.setInformationOkEnabled(releaseServicePositionCallback, reached);
 }
 
 void menuView::close_lid_btn_onClick()
@@ -748,17 +779,9 @@ void menuView::options_lid_service_button_onClick(){
 				openLidErrorCallback);
 		return;
 	}
-	//maybe first move to service position and then apply service position modal
+
+	// the dialog is shown once the core moves, its OK enabled once it is reached (updateServicePositionDialog)
 	CoreCom_ServicePosition();
-
-	// if service position is reached show modal - or OK Button is not touchable until service position is reached
-	modalWrapper.sheduleInformationModal(
-			touchgfx::TypedText(T_SERVICEPOSITIONTITLE),
-			touchgfx::TypedText(T_SERVICEPOSITIONBODY),
-			releaseServicePositionCallback);
-
-
-
 }
 
 void menuView::options_sd_card_button_export_onClick(){
