@@ -7,6 +7,7 @@
 #include "main.h"
 #include "core-communication.hpp"
 #include "sd.hpp"
+#include "reflow_log.hpp"
 #include "unitConverter.hpp"
 //#include "UiErrorState.hpp"
 
@@ -19,14 +20,16 @@ menuView::menuView():
 {
 	modal::ModalElements elements = {
 		.modalWindowInformation = &modalWindowInformation,
-		.modalWindowInformationClose = &modalWindowInformationClose,
+		.modalWindowInformationClose = &modalWindowInformationOk,
 		.modalWindowInformationBody = &modalWindowInformationBody,
 		.modalWindowInformationTitle = &modalWindowInformationTitle,
 		.modalWindowDecision = &modalWindowDecision,
-		.modalWindowDecisionYes = &modalWindowDecisionYes,
-		.modalWindowDecisionNo = &modalWindowDecisionNo,
+		.modalWindowDecisionYes = &modalWindowDecisionOk,
+		.modalWindowDecisionNo = &modalWindowDecisionClose,
 		.modalWindowDecisionBody = &modalWindowDecisionBody,
 		.modalWindowDecisionTitle = &modalWindowDecisionTitle,
+		.modalWindowInformationCloseReleased = touchgfx::Bitmap(BITMAP_BUTTON_OK_170X45_ID),
+		.modalWindowInformationCloseDisabled = touchgfx::Bitmap(BITMAP_BUTTON_OK_737373_170X45_ID),
 	};
 	modalWrapper = modal::Modal(elements);
 	errorState.setModal(&modalWrapper);
@@ -40,6 +43,7 @@ menuView::menuView():
 
 	loadSettingsFromFlash();
 	restoreOpenTemperature();
+	updateReflowLogSetting();
 }
 
 void menuView::restoreOpenTemperature(){
@@ -48,9 +52,9 @@ void menuView::restoreOpenTemperature(){
 		vpx_log("Open temperature mode: Eco");
 		CoreCom_SetLidMode(VPX_ECO);
 
-		options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_PUSHED_ID));
-		options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_PUSHED_ID));
-		options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_PUSHED_GREEN_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_PUSHED_ID));
+		options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_737373_120X60_ID));
+		options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_737373_120X60_ID));
+		options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_120X60_ID));
 
 		options_openlid_tem_button_fast.invalidate();
 		options_openlid_tem_button_standard.invalidate();
@@ -60,9 +64,9 @@ void menuView::restoreOpenTemperature(){
 		vpx_log("Open temperature mode: Standard");
 		CoreCom_SetLidMode(VPX_STANDARD);
 
-		options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_PUSHED_ID));
-		options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_PUSHED_GREEN_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_PUSHED_ID));
-		options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_PUSHED_ID));
+		options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_737373_120X60_ID));
+		options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_120X60_ID));
+		options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_737373_120X60_ID));
 
 		options_openlid_tem_button_fast.invalidate();
 		options_openlid_tem_button_standard.invalidate();
@@ -72,9 +76,9 @@ void menuView::restoreOpenTemperature(){
 		vpx_log("Open temperature mode: Fast");
 		CoreCom_SetLidMode(VPX_FAST);
 
-		options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_PUSHED_GREEN_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_PUSHED_ID));
-		options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_PUSHED_ID));
-		options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_PUSHED_ID));
+		options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_120X60_ID));
+		options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_737373_120X60_ID));
+		options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_737373_120X60_ID));
 
 		options_openlid_tem_button_fast.invalidate();
 		options_openlid_tem_button_standard.invalidate();
@@ -144,6 +148,9 @@ void menuView::setupScreen()
     menuViewBase::setupScreen();
     graph_target.setTouchable(false);
     graph_actual.setTouchable(false);
+
+    // Only here and on unit toggle: it rebuilds both graphs completely
+    adaptUiToUnits();
 }
 
 void menuView::tearDownScreen()
@@ -161,11 +168,11 @@ void menuView::updateTemperatureAndState(){
 void menuView::handleTickEvent()
 {
 	this->updateTemperatureAndState();
-	this->adaptUiToUnits();
 	this->updateButtonStates();
 	this->updateSolderProfiles();
 	this->updateTemperatureGraph();
 	this->updateLogging();
+	this->updateSelftest();
 
 	errorState.ErrorStateWorker();
 }
@@ -183,33 +190,31 @@ void menuView::TempUnitToggled(){
 	adaptUiToUnits();
 }
 
-//ADD FUNCTION WHEN SELFTEST GPIO IS CONNECTED!
-//void menuView::updateSelftest() {
-//	Vpx_CoreStateTypeDef state = CoreCom_CoreState();
-//
-//	if(HAL_GPIO_ReadPin(SELFTEST_GPIO_Port, SELFTEST_Pin) == GPIO_PIN_RESET && !showingSelftestQuestion) {
-//		showingSelftestQuestion = true;
-//
-//	    modalWrapper.sheduleDecisionModal(
-//	    		touchgfx::TypedText(T_SELFTESTTITLE),
-//				touchgfx::TypedText(T_SELFTESTQUESTIONBODY),
-//				startReflowDecisionCallback);
-//	}
-//
-//	if(state.selftest_active && !selftestActiveOpened) {
-//		modalWrapper.showOverlayInfo(
-//				touchgfx::TypedText(T_SELFTESTTITLE),
-//				touchgfx::TypedText(T_SELFTESTRUNNINGBODY));
-//
-//		selftestActiveOpened = true;
-//	} else if(!state.selftest_active && selftestActiveOpened) {
-//		modalWrapper.hideOverlayInfo();
-//
-//		selftestActiveOpened = false;
-//	}
-//}
+void menuView::updateSelftest(){
+	// Button is active low. Holding it for selftestHoldTimeMs starts the
+	// selftest once per press (replaces the confirmation, filters bouncing).
+	if(HAL_GPIO_ReadPin(SELFTEST_GPIO_Port, SELFTEST_Pin) != GPIO_PIN_RESET){
+		selftestPressedSinceMs = 0;
+		selftestTriggered = false;
+		return;
+	}
 
+	if(selftestPressedSinceMs == 0){
+		selftestPressedSinceMs = HAL_GetTick();
+	}
 
+	if(!selftestTriggered && HAL_GetTick() - selftestPressedSinceMs >= selftestHoldTimeMs){
+		selftestTriggered = true;
+		vpx_log("Selftest button held");
+		CoreCom_StartSelftest();
+
+		//Modal Information Ok Decision should be only possible if Selftest is finished.
+		modalWrapper.sheduleInformationModal(
+				touchgfx::TypedText(T_SELFTESTTITLE),
+				touchgfx::TypedText(T_SELFTESTBODY),
+				NULL);
+	}
+}
 
 void menuView::adaptUiToUnits(){
 	if(currentUnit == CELSIUS){
@@ -239,6 +244,18 @@ void openLidErrorCallback() {
 	vpx_log("Failure message 'open lid conditions not met' acknowledged");
 }
 
+// The service position dialog is shown while the core moves to the service
+// position and while it is there. Its OK can only be pressed once it is reached
+// and releases it (the core closes the lid, then moves the lift down).
+static bool servicePositionDialogShown = false;
+
+void releaseServicePositionCallback() {
+	vpx_log("Release service position pushed");
+	// servicePositionDialogShown stays set until the core reports the lid closing,
+	// so the core state from before the release doesn't show the dialog again
+	CoreCom_ReleaseServicePosition();
+}
+
 void stopReflowDecisionCallback(bool answer){
 	if(answer) {
 		CoreCom_StopReflow();
@@ -256,6 +273,8 @@ void menuView::updateCoolantTemperatureLabel() {
 	DegreeCelcius coolant_temperature_celsius = CoreCom_CoolantTemperature() / 1000;
 	float temp = celsiusToUnit(coolant_temperature_celsius, currentUnit);
 
+	// Invalidate the old extent too, else a shorter text leaves stray pixels
+	cooling_temp_text.invalidate();
 	Unicode::snprintfFloat(cooling_temp_textBuffer1, COOLING_TEMP_TEXTBUFFER1_SIZE,"%.0f", temp);
 	cooling_temp_text.resizeToCurrentText();
 	cooling_temp_text.invalidate();
@@ -272,6 +291,8 @@ void menuView::updatePCBTemperatureLabel() {
 	DegreeCelcius pcb_temperature_celsius = CoreCom_PcbTemperature() / 1000;
 	float temp = celsiusToUnit(pcb_temperature_celsius, currentUnit);
 
+	// Invalidate the old extent too, else a shorter text leaves stray pixels
+	pcb_temp_text.invalidate();
 	Unicode::snprintfFloat(pcb_temp_textBuffer1, PCB_TEMP_TEXTBUFFER1_SIZE,"%.0f", temp);
 	pcb_temp_text.resizeToCurrentText();
 	pcb_temp_text.invalidate();
@@ -287,6 +308,8 @@ void menuView::updateGaldenTemperatureLabel() {
 	DegreeCelcius galden_temperature_celcius = CoreCom_LiquidTemperature() / 1000;
 	float temp = celsiusToUnit(galden_temperature_celcius, currentUnit);
 
+	// Invalidate the old extent too, else a shorter text leaves stray pixels
+	galden_temp_text.invalidate();
 	Unicode::snprintfFloat(galden_temp_textBuffer1, GALDEN_TEMP_TEXTBUFFER1_SIZE,"%.0f", temp);
 	galden_temp_text.resizeToCurrentText();
 	galden_temp_text.invalidate();
@@ -295,39 +318,26 @@ void menuView::updateGaldenTemperatureLabel() {
 
 void menuView::updateCurrentState(){
 	Vpx_CoreStateTypeDef coreState = CoreCom_CoreState();
-	if(coreState.current_state == CS_Preheat){
-		//Clear Display
-		Unicode::strncpy(state_textBuffer, "\0" , 12);
-		state_text.invalidate();
-
-		Unicode::strncpy(state_textBuffer,"Preheat", 8);
-		state_text.resizeToCurrentText();
-		state_text.invalidate();
+	const int state = coreState.current_state;
+	if(state == shownCurrentState){
+		return;
 	}
-	else if(coreState.current_state == CS_Soldering){
-		Unicode::strncpy(state_textBuffer,"Soldering", 10);
-		state_text.resizeToCurrentText();
-		state_text.invalidate();
-		}
-	else if(coreState.current_state == CS_AntiCondensation){
-		Unicode::strncpy(state_textBuffer,"Quick cool",11);
-		state_text.resizeToCurrentText();
-		state_text.invalidate();
-		}
-	else if(coreState.current_state == CS_Calibration){
-		Unicode::strncpy(state_textBuffer,"Calibrating",12);
-		state_text.resizeToCurrentText();
-		state_text.invalidate();
-	}
-	else{
-		Unicode::strncpy(state_textBuffer, "\0" , 12);
-		state_text.invalidate();
+	shownCurrentState = state;
 
-		Unicode::strncpy(state_textBuffer, "Idle", 5);
-		state_text.resizeToCurrentText();
-		state_text.invalidate();
-
+	const char* text;
+	switch(state){
+	case CS_Preheat:          text = "Preheat";     break;
+	case CS_Soldering:        text = "Soldering";   break;
+	case CS_AntiCondensation: text = "Quick cool";  break;
+	case CS_Calibration:      text = "Calibrating"; break;
+	default:                  text = "Idle";        break;
 	}
+
+	// Invalidate the old extent too, else a shorter text leaves stray pixels
+	state_text.invalidate();
+	Unicode::strncpy(state_textBuffer, text, STATE_TEXT_SIZE);
+	state_text.resizeToCurrentText();
+	state_text.invalidate();
 }
 
 //void menuView::adaptUiToUnits(){
@@ -397,31 +407,65 @@ void menuView::updateButtonStates() {
 	Vpx_CoreStateTypeDef coreState = CoreCom_CoreState();
 
 	updateVisibility(&start_reflow, !coreState.reflow_active);
+
 	updateEnabledBitmapsOnly(&start_reflow, coreState.can_start_reflow && isProfileSelected,
-			touchgfx::Bitmap(BITMAP_START_REFLOW_ID), touchgfx::Bitmap(BITMAP_START_REFLOW_PUSH_ID),
-						touchgfx::Bitmap(BITMAP_START_REFLOW_DIABLED_ID),
+			touchgfx::Bitmap(BITMAP_START_REFLOW_BUTTON_468X91_ID), touchgfx::Bitmap(BITMAP_START_REFLOW_BUTTON_PRESSED_468X91_ID),
+						touchgfx::Bitmap(BITMAP_START_REFLOW_BUTTON_PRESSED_468X91_ID),
 						&startReflowEnabled);
 
 	updateEnabled(&stop_reflow, coreState.can_stop_reflow,
-			touchgfx::Bitmap(BITMAP_STOP_REFLOW_ID), touchgfx::Bitmap(BITMAP_STOP_REFLOW_PUSH_ID),
-									touchgfx::Bitmap(BITMAP_STOP_REFLOW_DISABLED_ID));
+			touchgfx::Bitmap(BITMAP_STOP_REFLOW_BUTTON_468X91_ID), touchgfx::Bitmap(BITMAP_STOP_REFLOW_BUTTON_PRESSED_468X91_ID),
+									touchgfx::Bitmap(BITMAP_STOP_REFLOW_BUTTON_PRESSED_468X91_ID));
 
 	updateVisibility(&open_lid, coreState.lid_state != LID_STATE_OPEN && coreState.lid_state != LID_STATE_CLOSING);
+
 	updateEnabledBitmapsOnly(&open_lid, coreState.can_open_lid && coreState.lid_state == LID_STATE_CLOSED,
-			touchgfx::Bitmap(BITMAP_OPEN_LID_ID), touchgfx::Bitmap(BITMAP_OPEN_LID_PUSH_ID),
-			touchgfx::Bitmap(BITMAP_OPEN_LID_DISABLED_ID),
+			touchgfx::Bitmap(BITMAP_OPEN_LID_BUTTON_468X91_ID), touchgfx::Bitmap(BITMAP_OPEN_LID_BUTTON_468X91_ID),
+			touchgfx::Bitmap(BITMAP_OPEN_LID_BUTTON_PRESSED_468X91_ID),
 			&openLidEnabled);
 
 	updateEnabled(&close_lid, coreState.lid_state == LID_STATE_OPEN,
-			touchgfx::Bitmap(BITMAP_CLOSE_LID_ID), touchgfx::Bitmap(BITMAP_CLOSE_LID_PUSH_ID),
-			touchgfx::Bitmap(BITMAP_CLOSE_LID_DISABLED_ID));
+			touchgfx::Bitmap(BITMAP_CLOSE_LID_BUTTON_468X91_ID), touchgfx::Bitmap(BITMAP_CLOSE_LID_BUTTON_PRESSED_468X91_ID),
+			touchgfx::Bitmap(BITMAP_CLOSE_LID_BUTTON_PRESSED_468X91_ID));
 
-	updateEnabled(&options_button_profile_set, !coreState.reflow_active,
-			touchgfx::Bitmap(BITMAP_BUTTON_SET_ID), touchgfx::Bitmap(BITMAP_BUTTON_SET_PUSH_ID),
-			touchgfx::Bitmap(BITMAP_BUTTON_SET_DISABLE_ID));
+	updateEnabled(&options_lid_service_button, (coreState.can_open_lid && coreState.lid_state == LID_STATE_CLOSED),
+			touchgfx::Bitmap(BITMAP_BUTTON_SET_170X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_SET_737373_170X60_ID),
+			touchgfx::Bitmap(BITMAP_BUTTON_SET_737373_170X60_ID));
 
 	updateVisibility(&options_sd_card_button_eject, SD_Mounted());
 	updateVisibility(&options_sd_card_button_mount, !SD_Mounted());
+
+	updateEnabled(&options_button_profile_set, !coreState.reflow_active,
+				touchgfx::Bitmap(BITMAP_BUTTON_SET_170X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_SET_737373_170X60_ID),
+				touchgfx::Bitmap(BITMAP_BUTTON_SET_737373_170X60_ID));
+
+	updateServicePositionDialog(coreState);
+}
+
+void menuView::updateServicePositionDialog(const Vpx_CoreStateTypeDef& coreState) {
+	bool reached = coreState.service_position_active && coreState.lid_state == LID_STATE_OPEN;
+	bool moving = coreState.service_position_active && coreState.lid_state == LID_STATE_OPENING;
+
+	// Also after the display restarted and again if the lid stopped before it was closed on the release
+	if(!servicePositionDialogShown) {
+		if(reached || moving) {
+			servicePositionDialogShown = true;
+			modalWrapper.sheduleInformationModal(
+					touchgfx::TypedText(T_SERVICEPOSITIONTITLE),
+					touchgfx::TypedText(T_SERVICEPOSITIONBODY),
+					releaseServicePositionCallback, reached);
+		}
+		return;
+	}
+
+	// released, or aborted by the core, e.g. on an axis error
+	if(!reached && !moving) {
+		servicePositionDialogShown = false;
+		modalWrapper.cancelInformationModal(releaseServicePositionCallback);
+		return;
+	}
+
+	modalWrapper.setInformationOkEnabled(releaseServicePositionCallback, reached);
 }
 
 void menuView::close_lid_btn_onClick()
@@ -464,8 +508,6 @@ void menuView::start_reflow_btn_onClick(){
 	graph_actual.invalidateContent();
 	graph_actual.invalidate();
 
-	graph_actual.addDataPoint(0);
-
 	abortedProfileText.setVisible(false);
 	abortedProfileBackground.setVisible(false);
 
@@ -485,9 +527,9 @@ void menuView::options_openlid_tem_button_eco_onClick(){
 	vpx_log("Open temperature mode: Eco");
 	CoreCom_SetLidMode(VPX_ECO);
 
-	options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_PUSHED_ID));
-	options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_PUSHED_ID));
-	options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_PUSHED_GREEN_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_PUSHED_ID));
+	options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_737373_120X60_ID));
+	options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_737373_120X60_ID));
+	options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_120X60_ID));
 
 	options_openlid_tem_button_fast.invalidate();
 	options_openlid_tem_button_standard.invalidate();
@@ -501,9 +543,9 @@ void menuView::options_openlid_tem_button_standard_onClick(){
 	vpx_log("Open temperature mode: Standard");
 	CoreCom_SetLidMode(VPX_STANDARD);
 
-	options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_PUSHED_ID));
-	options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_PUSHED_GREEN_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_PUSHED_ID));
-	options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_PUSHED_ID));
+	options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_737373_120X60_ID));
+	options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_120X60_ID));
+	options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_737373_120X60_ID));
 
 	options_openlid_tem_button_fast.invalidate();
 	options_openlid_tem_button_standard.invalidate();
@@ -517,9 +559,9 @@ void menuView::options_openlid_tem_button_fast_onClick(){
 	vpx_log("Open temperature mode: Fast");
 	CoreCom_SetLidMode(VPX_FAST);
 
-	options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_PUSHED_GREEN_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_PUSHED_ID));
-	options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_PUSHED_ID));
-	options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_PUSHED_ID));
+	options_openlid_tem_button_fast.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_FAST_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_FAST_120X60_ID));
+	options_openlid_tem_button_standard.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_STANDARD_737373_120X60_ID));
+	options_openlid_tem_button_eco.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ECO_737373_120X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_ECO_737373_120X60_ID));
 
 	options_openlid_tem_button_fast.invalidate();
 	options_openlid_tem_button_standard.invalidate();
@@ -530,7 +572,7 @@ void menuView::options_openlid_tem_button_fast_onClick(){
     }
 
 void menuView::options_sd_card_button_mount_onClick(){
-     SD_Mount();
+	SD_SheduleMount();
 }
 
 void menuView::options_sd_card_button_eject_onClick(){
@@ -627,12 +669,18 @@ void menuView::options_button_profile_set_onClick(){
 		graph_actual.invalidateContent();
 		graph_actual.invalidate();
 
-		graph_actual.addDataPoint(0);
-
 		std::string profilePath = solderProfiles[itemIndex];
 		selectedProfile = loadSolderCsv(profilePath);
 		if(!selectedProfile.valid){
-			SD_SheduleUnmount();
+			if(selectedProfile.readError){
+				SD_SheduleUnmount();
+			} else {
+				// the reason is in the log
+				vpx_log("Profile %s is invalid", profilePath.c_str());
+				modalWrapper.sheduleInformationModal(
+						touchgfx::TypedText(T_INVALIDPROFILETITLE),
+						touchgfx::TypedText(T_INVALIDPROFILEBODY));
+			}
 			return;
 		}
 		vpx_log("Profile %s selected", profilePath.c_str());
@@ -661,6 +709,7 @@ void menuView::options_button_profile_set_onClick(){
 
 	    CoreCom_SendGalden(selectedProfile);		//Core communication to send Galden Boilingtemperature of .csv
 		CoreCom_SendACT(selectedProfile);
+		ReflowLog_SetProfile(profilePath.c_str(), profileTemperaturesS, profileDurationS);
 	    drawSetHeatProfileGraph();
 		adaptGraphTimeAxis();
 
@@ -705,17 +754,57 @@ void menuView::adaptGraphTimeAxis(){
 	graph_target.invalidate();
 }
 
-void menuView::modalWindowInformationClose_btn_onClick(){
+void menuView::modalWindowInformationOk_btn_onClick(){
 	modalWrapper.closeModal(false);
 }
 
-void menuView::modalWindowDecisionYes_btn_onClick(){
+void menuView::modalWindowDecisionOk_btn_onClick(){
 	modalWrapper.closeModal(true);
 }
 
-void menuView::modalWindowDecisionNo_btn_onClick(){
+void menuView::modalWindowDecisionClose_btn_onClick(){
 	modalWrapper.closeModal(false);
 
+}
+
+void menuView::options_lid_service_button_onClick(){
+	Vpx_CoreStateTypeDef coreState = CoreCom_CoreState();
+	vpx_log("Service position pushed");
+
+	// Same conditions as opening the lid. Not with the lid open: the lift doesn't move then.
+	if(!(coreState.can_open_lid && coreState.lid_state == LID_STATE_CLOSED)) {
+		modalWrapper.sheduleInformationModal(
+				touchgfx::TypedText(T_LIDCONDITIONERRORTITLE),
+				touchgfx::TypedText(T_LIDCONDITIONERRORBODY),
+				openLidErrorCallback);
+		return;
+	}
+
+	// the dialog is shown once the core moves, its OK enabled once it is reached (updateServicePositionDialog)
+	CoreCom_ServicePosition();
+}
+
+void menuView::options_sd_card_button_export_onClick(){
+	// toggles "Reflow recording active"
+	currentSettings.reflowLogEnabled = currentSettings.reflowLogEnabled == 1 ? 0 : 1;
+	this->saveSettings();
+	updateReflowLogSetting();
+}
+
+// The button shows the current state: yes = reflows are recorded
+void menuView::updateReflowLogSetting(){
+	const bool enabled = currentSettings.reflowLogEnabled == 1;
+	vpx_log("Reflow recording active: %s", enabled ? "on" : "off");
+	ReflowLog_SetEnabled(enabled);
+
+	if(enabled){
+		options_sd_card_button_export.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_ACTIVE_170X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_ACTIVE_170X60_ID));
+	} else {
+		options_sd_card_button_export.setBitmaps(touchgfx::Bitmap(BITMAP_BUTTON_INACTIVE_737373_170X60_ID), touchgfx::Bitmap(BITMAP_BUTTON_INACTIVE_737373_170X60_ID));
+	}
+	// the images are 45 px high, the button 60 px
+	//options_sd_card_button_export.setBitmapXY(0, 7);
+	options_sd_card_button_export.invalidate();
 }
 
 void menuView::updateLogging(){

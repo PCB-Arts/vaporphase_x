@@ -4,7 +4,7 @@
   <PropertyGroup Label="UserMacros">
     <UseBPP>24</UseBPP>
     <TouchGFXReleasePath>..\..\..\Middlewares\ST\touchgfx</TouchGFXReleasePath>
-    <TouchGFXEnvPath>..\..\..\..\..\TouchGFX\4.23.2\env</TouchGFXEnvPath>
+    <TouchGFXEnvPath>..\..\..\..\..\..\..\..\..\..\TouchGFX\4.23.2\env</TouchGFXEnvPath>
     <ApplicationRoot>..\..</ApplicationRoot>
   </PropertyGroup>
   <PropertyGroup/>

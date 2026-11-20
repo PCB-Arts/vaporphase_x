@@ -242,6 +242,7 @@ typedef enum __SelftestLidState
 uint32_t selftest_lid_last_logged_at;
 uint32_t selftest_wait_started;
 static SelftestLidState selftest_lid_state;
+static bool selftest_lift_move_started;
 
 static void selftest_lid_init()
 {
@@ -249,10 +250,9 @@ static void selftest_lid_init()
 
   selftest_lid_last_logged_at = HAL_GetTick();
   selftest_lid_state = SELFTEST_LID_STATE_CAL;
+  selftest_lift_move_started = false;
   lid_calibrate();
 }
-
-int x = 1;
 
 static SelftestStateWorkerReturnCode selftest_lid_worker()
 {
@@ -292,10 +292,10 @@ static SelftestStateWorkerReturnCode selftest_lid_worker()
         SELFTEST_LID_WAIT_TIMEOUT_MILLISECONDS)
     {
 
-      if (x == 1)
+      if (!selftest_lift_move_started)
       {
-        axis_move_to(&lift_axis, 0);
-        x = 0;
+        axis_move_to(&lift_axis, LIFT_TOP_POSITION);
+        selftest_lift_move_started = true;
       }
       if (axis_stopped(&lift_axis))
       {

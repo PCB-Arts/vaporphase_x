@@ -17,8 +17,10 @@
 
 #include "lid_control.h"
 
+#include "log.h"
 #include "modules/lid.h"
 #include "modules/lift.h"
+#include "modules/motor.h"
 #include "modules/temp_sensors.h"
 
 #define LID_OPEN_TEMPERATURE_ECO_CELSIUS 70
@@ -28,6 +30,17 @@
 #define LID_OPEN_TEMPERATURE_HYSTERESE_CELCIUS 2
 
 static bool lid_prepare_opening = false;
+
+enum service_step_t
+{
+  SERVICE_NONE,
+  SERVICE_LIFT_TO_TOP,
+  SERVICE_OPEN_LID,
+  SERVICE_AT_POSITION,
+  SERVICE_CLOSE_LID,
+  SERVICE_LIFT_DOWN,
+};
+static enum service_step_t service_step = SERVICE_NONE;
 static LidOpenMode lid_control_lid_open_mode = VPX_STANDARD;
 static bool lid_temperature_requirements_met = false;
 
@@ -48,7 +61,78 @@ static inline void update_lid_temperature_requirements()
   }
 }
 
-void lid_control_init() { lid_prepare_opening = false; }
+static void service_position_worker()
+{
+  if (axis_has_error(&lid_axis) || axis_has_error(&lift_axis))
+  {
+    vpx_log("Service position aborted: axis error");
+    service_step = SERVICE_NONE;
+    return;
+  }
+
+  switch (service_step)
+  {
+  case SERVICE_NONE:
+    break;
+
+  case SERVICE_LIFT_TO_TOP:
+    if (axis_stopped(&lift_axis))
+    {
+      axis_move(&lid_axis, FWD);
+      service_step = SERVICE_OPEN_LID;
+    }
+    break;
+
+  case SERVICE_OPEN_LID:
+    if (axis_stopped(&lid_axis))
+    {
+      vpx_log(axis_forward_limit_switch_active(&lid_axis)
+                  ? "Service position reached"
+                  : "Service position: lid stopped before fully open");
+      service_step = SERVICE_AT_POSITION;
+    }
+    break;
+
+  case SERVICE_AT_POSITION:
+    // stays here until released
+    break;
+
+  case SERVICE_CLOSE_LID:
+    if (axis_stopped(&lid_axis) && axis_stopped(&lift_axis))
+    {
+      if (!axis_backward_limit_switch_active(&lid_axis))
+      {
+        // With the lid open the lift doesn't move on the device. Stay in the
+        // service position, so the release can be retried.
+        vpx_log("Service position release: lid stopped before closed");
+        service_step = SERVICE_AT_POSITION;
+        break;
+      }
+
+      // down to the lid open position, where it is after booting
+      lift_lid_open_state();
+      service_step = SERVICE_LIFT_DOWN;
+    }
+    break;
+
+  case SERVICE_LIFT_DOWN:
+    if (axis_stopped(&lift_axis))
+    {
+      vpx_log(lift_lid_open_state_reached()
+                  ? "Service position released"
+                  : "Service position release: lift not moved down");
+      service_step = SERVICE_NONE;
+    }
+    break;
+  }
+}
+
+void lid_control_init()
+{
+  lid_prepare_opening = false;
+  service_step = SERVICE_NONE;
+}
+
 void lid_control_worker()
 {
   if (lid_prepare_opening)
@@ -59,6 +143,8 @@ void lid_control_worker()
       axis_move(&lid_axis, FWD);
     }
   }
+
+  service_position_worker();
 
   update_lid_temperature_requirements();
 }
@@ -88,7 +174,58 @@ void lid_control_lid_open()
   lift_lid_open_state();
 }
 
-void lid_control_lid_close() { axis_move(&lid_axis, BWD); }
+void lid_control_lid_close()
+{
+  // in the service position the lift is moved down again after closing
+  if (lid_control_service_active())
+  {
+    lid_control_service_release();
+    return;
+  }
+
+  // cancels a pending open
+  lid_prepare_opening = false;
+
+  axis_move(&lid_axis, BWD);
+}
+
+void lid_control_service_position()
+{
+  // With the lid open the lift doesn't move on the device, but the step count
+  // runs anyway and the lift position would be wrong afterwards
+  if (lid_control_lid_state() != LID_STATE_CLOSED)
+  {
+    return;
+  }
+
+  motor_set_speed(lift_axis.motor, LIFT_MOTOR_MAX_SPEED);
+  axis_move_to(&lift_axis, LIFT_TOP_POSITION);
+  service_step = SERVICE_LIFT_TO_TOP;
+}
+
+void lid_control_service_release()
+{
+  switch (service_step)
+  {
+  case SERVICE_LIFT_TO_TOP:
+  case SERVICE_OPEN_LID:
+  case SERVICE_AT_POSITION:
+    break;
+
+  default:
+    // not in the service position or already releasing
+    return;
+  }
+
+  // Close the lid first: with the lid open the lift doesn't move on the
+  // device, but the step count runs anyway. The lift is moved down once the lid
+  // is closed.
+  axis_move(&lift_axis, DIRECTION_NONE);
+  axis_move(&lid_axis, BWD);
+  service_step = SERVICE_CLOSE_LID;
+}
+
+bool lid_control_service_active() { return service_step != SERVICE_NONE; }
 
 LidState lid_control_lid_state()
 {
@@ -97,6 +234,21 @@ LidState lid_control_lid_state()
 
   if (status == AXIS_ERROR)
     return LID_STATE_ERROR;
+
+  switch (service_step)
+  {
+  case SERVICE_LIFT_TO_TOP:
+  case SERVICE_OPEN_LID:
+    return LID_STATE_OPENING;
+
+  case SERVICE_CLOSE_LID:
+  case SERVICE_LIFT_DOWN:
+    // not closed until the lift is moved down again
+    return LID_STATE_CLOSING;
+
+  default:
+    break;
+  }
 
   if (lid_prepare_opening)
     return LID_STATE_OPENING;

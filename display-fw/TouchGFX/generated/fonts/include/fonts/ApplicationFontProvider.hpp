@@ -19,6 +19,9 @@ struct Typography
     static const touchgfx::FontId TEXT_GRAPH_SIZE = 3;
     static const touchgfx::FontId MEDIUM_14 = 4;
     static const touchgfx::FontId DEFAULT_FAT = 5;
+    static const touchgfx::FontId TYPOGRAPHY_00 = 6;
+    static const touchgfx::FontId TYPOGRAPHY_01 = 7;
+    static const touchgfx::FontId TYPOGRAPHY_02 = 8;
 };
 
 struct TypographyFontIndex
@@ -29,7 +32,10 @@ struct TypographyFontIndex
     static const touchgfx::FontId TEXT_GRAPH_SIZE = 3; // arial_16_4bpp
     static const touchgfx::FontId MEDIUM_14 = 4;       // arial_14_4bpp
     static const touchgfx::FontId DEFAULT_FAT = 5;     // arialbd_20_4bpp
-    static const uint16_t NUMBER_OF_FONTS = 6;
+    static const touchgfx::FontId TYPOGRAPHY_00 = 6;   // verdana_20_4bpp
+    static const touchgfx::FontId TYPOGRAPHY_01 = 6;   // verdana_20_4bpp
+    static const touchgfx::FontId TYPOGRAPHY_02 = 6;   // verdana_20_4bpp
+    static const uint16_t NUMBER_OF_FONTS = 7;
 };
 
 class ApplicationFontProvider : public touchgfx::FontProvider

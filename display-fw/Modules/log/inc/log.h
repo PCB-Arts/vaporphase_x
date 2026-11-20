@@ -23,6 +23,8 @@ extern "C"
 {
 #endif
 
+  // Creates the lock; call before the scheduler starts
+  void vpx_log_init(void);
   void vpx_component_log(const char *message, const char *component);
   void vpx_log(const char *format, ...);
 

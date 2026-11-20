@@ -66,6 +66,8 @@ typedef struct __attribute__((__packed__)) __Vpx_CoreStateTypeDef
   bool can_start_selftest : 1;
   bool selftest_active : 1;
   CurrentState current_state : 5;
+  // from starting the service position until the lift is moved down again
+  bool service_position_active : 1;
 } Vpx_CoreStateTypeDef;
 
 typedef struct __attribute__((__packed__)) __Vpx_CoreMonitorStateComplete
