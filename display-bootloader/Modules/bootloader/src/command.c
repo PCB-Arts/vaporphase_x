@@ -96,7 +96,8 @@ static struct fw_upd_pk fw_upd_pk = {
 
 #define BUFFERSIZE ((uint16_t)1 * 8192)
 
-uint8_t RAMBuf[BUFFERSIZE] = {0x00};
+/* The SDMMC IDMA requires a word aligned buffer */
+uint8_t RAMBuf[BUFFERSIZE] __attribute__((aligned(4))) = {0x00};
 
 void COMMAND_JUMP(void)
 {
@@ -211,7 +212,7 @@ uint32_t COMMAND_ProgramFlashMemory(FIL *f, COMMAND_dataCallback data_callback)
 
   if (memcmp(calculated_sha256, header.sha256, sizeof(calculated_sha256)))
   {
-    return DOWNLOAD_SIGNATURE_FAIL;
+    return DOWNLOAD_HASH_FAIL;
   }
 
   return DOWNLOAD_OK;

@@ -24,7 +24,7 @@
 #include "cmsis_os2.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "log.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,7 +53,7 @@ osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
   .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 128 * 4
+  .stack_size = 256 * 4
 };
 /* Definitions for TouchGFXTask */
 osThreadId_t TouchGFXTaskHandle;
@@ -158,11 +158,22 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN defaultTask */
   /* Infinite loop */
   HeapStats_t heap_stats;
+  size_t logged_min_free_heap = 0;
   for(;;)
   {
 	  free_stack_sd = uxTaskGetStackHighWaterMark(xTaskGetHandle("SDTask"));
 	  free_stack_gfx = uxTaskGetStackHighWaterMark(xTaskGetHandle("TouchGFXTask"));
 	  free_stack_com = uxTaskGetStackHighWaterMark(xTaskGetHandle("CoreComTask"));
+
+	  // Log the FreeRTOS heap low-water mark, only when it has dropped
+	  const size_t min_free_heap = xPortGetMinimumEverFreeHeapSize();
+	  if (min_free_heap != logged_min_free_heap)
+	  {
+		  logged_min_free_heap = min_free_heap;
+		  vpx_log("Heap: min free %u of %u bytes, now free %u",
+				  (unsigned)min_free_heap, (unsigned)configTOTAL_HEAP_SIZE,
+				  (unsigned)xPortGetFreeHeapSize());
+	  }
 	  osDelay(1000);
   }
   /* USER CODE END defaultTask */

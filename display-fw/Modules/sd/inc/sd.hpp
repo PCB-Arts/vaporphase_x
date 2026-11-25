@@ -35,7 +35,6 @@ extern "C"
   extern volatile SD_ErrorTypeDef SD_error_state;
 
   void SD_Init();
-  void SD_Mount();
   bool SD_Mounted();
   SD_ErrorTypeDef SD_ErrorState();
   void SD_SheduleUnmount();
