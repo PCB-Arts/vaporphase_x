@@ -121,6 +121,7 @@ protected:
     void updateTemperatureAndState();
     void updateButtonStates();
     void updateServicePositionDialog(const Vpx_CoreStateTypeDef& coreState);
+    void updateSelftestDialog(const Vpx_CoreStateTypeDef& coreState);
     void updateEnabledBitmapsOnly(touchgfx::ImageButtonStyle<touchgfx::TouchButtonTrigger>* button, bool shouldBeEnabled,
     		const touchgfx::Bitmap& bmpReleased, const touchgfx::Bitmap& bmpPressed,
     		const touchgfx::Bitmap& bmpDisabled, bool* enabledState);

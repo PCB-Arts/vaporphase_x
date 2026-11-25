@@ -206,14 +206,34 @@ void menuView::updateSelftest(){
 	if(!selftestTriggered && HAL_GetTick() - selftestPressedSinceMs >= selftestHoldTimeMs){
 		selftestTriggered = true;
 		vpx_log("Selftest button held");
+		// the dialog is shown by updateSelftestDialog() once the core reports it started
 		CoreCom_StartSelftest();
-
-		//Modal Information Ok Decision should be only possible if Selftest is finished.
-		modalWrapper.sheduleInformationModal(
-				touchgfx::TypedText(T_SELFTESTTITLE),
-				touchgfx::TypedText(T_SELFTESTBODY),
-				NULL);
 	}
+}
+
+// The selftest dialog is shown while the core runs the selftest. Its OK can only
+// be pressed once the selftest is finished.
+static bool selftestDialogShown = false;
+
+void selftestDialogClosedCallback() {
+	vpx_log("Selftest dialog closed");
+	selftestDialogShown = false;
+}
+
+void menuView::updateSelftestDialog(const Vpx_CoreStateTypeDef& coreState) {
+	// Also after the display restarted. Not shown if the core didn't start it.
+	if(!selftestDialogShown) {
+		if(coreState.selftest_active) {
+			selftestDialogShown = true;
+			modalWrapper.sheduleInformationModal(
+					touchgfx::TypedText(T_SELFTESTTITLE),
+					touchgfx::TypedText(T_SELFTESTBODY),
+					selftestDialogClosedCallback, false);
+		}
+		return;
+	}
+
+	modalWrapper.setInformationOkEnabled(selftestDialogClosedCallback, !coreState.selftest_active);
 }
 
 void menuView::adaptUiToUnits(){
@@ -440,6 +460,7 @@ void menuView::updateButtonStates() {
 				touchgfx::Bitmap(BITMAP_BUTTON_SET_737373_170X60_ID));
 
 	updateServicePositionDialog(coreState);
+	updateSelftestDialog(coreState);
 }
 
 void menuView::updateServicePositionDialog(const Vpx_CoreStateTypeDef& coreState) {
